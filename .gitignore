@@ -10,3 +10,4 @@ build/
 *.tsbuildinfo
 *.log
 pnpm-lock.yaml
+.vercel-payload.json
