@@ -78,9 +78,9 @@ export default function AccueilClient() {
     <div className="lsms-root" id="top">
       {/* ORBES */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -left-[180px] -top-[260px] h-[720px] w-[720px] rounded-full bg-[rgba(20,184,166,0.14)] blur-[90px]" />
-        <div className="absolute -right-[220px] top-[20%] h-[600px] w-[600px] rounded-full bg-[rgba(226,59,78,0.08)] blur-[90px]" />
-        <div className="absolute bottom-[-200px] left-[30%] h-[520px] w-[520px] rounded-full bg-[rgba(94,234,212,0.08)] blur-[90px]" />
+        <div className="absolute -left-[180px] -top-[260px] h-[720px] w-[720px] rounded-full bg-[rgba(200,16,46,0.10)] blur-[90px]" />
+        <div className="absolute -right-[220px] top-[20%] h-[600px] w-[600px] rounded-full bg-[rgba(127,168,217,0.10)] blur-[90px]" />
+        <div className="absolute bottom-[-200px] left-[30%] h-[520px] w-[520px] rounded-full bg-[rgba(27,58,107,0.12)] blur-[90px]" />
       </div>
 
       <div className="relative z-[1] mx-auto max-w-[1240px] px-5 sm:px-[30px]">
@@ -96,7 +96,7 @@ export default function AccueilClient() {
               className="bg-clip-text text-transparent"
               style={{
                 backgroundImage:
-                  "linear-gradient(112deg,#D7FBF4 0%,#7EE8D8 24%,#2AA893 52%,#128576 76%,#4FC9B4 100%)",
+                  "linear-gradient(112deg,#BFDCF5 0%,#8FBBE3 24%,#4A7EC4 52%,#1B3A6B 76%,#C8102E 100%)",
               }}
             >
               Medical Services
@@ -114,9 +114,9 @@ export default function AccueilClient() {
             </a>
           </div>
           <div className="relative flex items-center justify-center">
-            <div className="lsms-spin absolute h-[420px] w-[420px] rounded-full blur-[46px]" style={{ background: "conic-gradient(from 0deg, rgba(20,184,166,0), rgba(20,184,166,0.18), rgba(226,59,78,0.12), rgba(20,184,166,0))" }} />
+            <div className="lsms-spin absolute h-[420px] w-[420px] rounded-full blur-[46px]" style={{ background: "conic-gradient(from 0deg, rgba(200,16,46,0), rgba(200,16,46,0.16), rgba(127,168,217,0.16), rgba(200,16,46,0))" }} />
             <div className="absolute h-[360px] w-[360px] rounded-full border border-white/[0.12]" />
-            <div className="lsms-spin-slow absolute h-[280px] w-[280px] rounded-full border border-dashed border-[rgba(94,234,212,0.25)]" />
+            <div className="lsms-spin-slow absolute h-[280px] w-[280px] rounded-full border border-dashed border-[rgba(143,187,227,0.3)]" />
             <div data-hero-emblem style={{ display: "inline-block" }}>
               <Image
                 src="/lsms/emblem-hd.png"

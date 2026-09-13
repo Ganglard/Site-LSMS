@@ -192,7 +192,7 @@ export default function CandidatureClient() {
   return (
     <div
       className="lsms-root"
-      style={{ background: "radial-gradient(1200px 700px at 50% 8%, rgba(20,184,166,0.10), transparent 70%), radial-gradient(900px 900px at 85% 100%, rgba(226,59,78,0.08), transparent 65%), #071010", backgroundAttachment: "fixed" }}
+      style={{ background: "radial-gradient(1200px 700px at 50% 8%, rgba(127,168,217,0.10), transparent 70%), radial-gradient(900px 900px at 85% 100%, rgba(200,16,46,0.07), transparent 65%), #060a12", backgroundAttachment: "fixed" }}
     >
       <div className="relative z-[1] mx-auto max-w-[920px] px-[18px] pb-[90px] pt-[46px]">
         <div className="mb-[30px] flex flex-wrap items-center justify-between gap-4">
@@ -207,11 +207,11 @@ export default function CandidatureClient() {
 
         <div className="relative" id="sheetWrap">
           {!sent && (
-            <div className="absolute -top-4 right-[-14px] z-[3] w-[148px] bg-gradient-to-b from-[#B9F3E7] to-[#8FE4D3] px-3.5 pb-[18px] pt-4 text-center shadow-[0_8px_22px_rgba(0,0,0,0.35)]" style={{ transform: "rotate(4deg)" }}>
-              <div className="text-[38px] font-bold leading-none text-[#0B3B34]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>{pct}%</div>
-              <div className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#12554B]">complete</div>
-              <div className="mt-2 h-[5px] overflow-hidden rounded-full bg-[rgba(11,59,52,0.18)]">
-                <div className="h-full rounded-full bg-[#0F7A6C] transition-all duration-500" style={{ width: `${pct}%` }} />
+            <div className="absolute -top-4 right-[-14px] z-[3] w-[148px] bg-gradient-to-b from-[#C9DCF2] to-[#9FBedD] px-3.5 pb-[18px] pt-4 text-center shadow-[0_8px_22px_rgba(0,0,0,0.35)]" style={{ transform: "rotate(4deg)" }}>
+              <div className="text-[38px] font-bold leading-none text-[#122E54]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>{pct}%</div>
+              <div className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#1B3A6B]">complete</div>
+              <div className="mt-2 h-[5px] overflow-hidden rounded-full bg-[rgba(18,46,84,0.18)]">
+                <div className="h-full rounded-full bg-[#1B3A6B] transition-all duration-500" style={{ width: `${pct}%` }} />
               </div>
             </div>
           )}
@@ -334,7 +334,7 @@ export default function CandidatureClient() {
                 </div>
 
                 {draftShown && (
-                  <div className="mt-6 rounded-[10px] border border-[rgba(18,33,30,0.18)] bg-[rgba(20,184,166,0.07)] px-5 py-3.5 text-[13px] text-[#12554B]">
+                  <div className="mt-6 rounded-[10px] border border-[rgba(18,33,30,0.18)] bg-[rgba(127,168,217,0.10)] px-5 py-3.5 text-[13px] text-[#1B3A6B]">
                     Un brouillon sauvegarde a ete restaure sur cet appareil.
                   </div>
                 )}
@@ -372,7 +372,7 @@ export default function CandidatureClient() {
               </form>
             ) : (
               <div className="done-block py-[30px] text-center" style={{ animation: "fadeUp 0.45s var(--ease-out) both" }}>
-                <div className="mb-6 inline-block rounded-md border-[3.5px] border-double border-[#0F7A6C] px-[26px] py-3.5 text-[30px] font-bold uppercase tracking-[0.24em] text-[#0F7A6C]" style={{ fontFamily: "var(--font-saira), sans-serif", transform: "rotate(-7deg)" }}>
+                <div className="mb-6 inline-block rounded-md border-[3.5px] border-double border-[#1B3A6B] px-[26px] py-3.5 text-[30px] font-bold uppercase tracking-[0.24em] text-[#1B3A6B]" style={{ fontFamily: "var(--font-saira), sans-serif", transform: "rotate(-7deg)" }}>
                   Recu
                 </div>
                 <h2 className="mb-3.5 uppercase text-[#0D1B18]" style={{ fontFamily: "var(--font-saira), sans-serif", fontSize: 40, fontWeight: 700 }}>
@@ -380,7 +380,7 @@ export default function CandidatureClient() {
                 </h2>
                 <p className="mb-2 text-[15px] leading-[1.7] text-[#48605A]">Votre dossier est arrive a la direction des ressources humaines du LSMS.</p>
                 <p className="mb-2 text-[15px] leading-[1.7] text-[#48605A]">La reponse et votre convocation a l&apos;entretien vous parviendront sur Discord.</p>
-                <p className="text-[15px] text-[#48605A]">Reference du dossier : <strong className="text-[#0F7A6C]">{reference}</strong> · Delai moyen 48 h</p>
+                <p className="text-[15px] text-[#48605A]">Reference du dossier : <strong className="text-[#B02A37]">{reference}</strong> · Delai moyen 48 h</p>
                 <div className="mt-7 flex flex-wrap justify-center gap-3.5">
                   <a href="/accueil" className="border-[1.5px] border-[#12211E] bg-[#12211E] px-[30px] py-[15px] text-[15px] font-bold uppercase tracking-[0.14em] text-[#EAF6F2] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1C342F]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
                     Retour a l&apos;accueil
@@ -405,10 +405,10 @@ export default function CandidatureClient() {
           color: #0D1B18;
           padding: 7px 4px 6px;
           border-radius: 0;
-          caret-color: #0F7A6C;
+          caret-color: #B02A37;
           transition: border-color 0.25s var(--ease-out), background 0.25s var(--ease-out);
         }
-        .lsms-paper-input:focus { outline: none; border-color: #0F7A6C; background: rgba(240, 253, 249, 0.85); }
+        .lsms-paper-input:focus { outline: none; border-color: #B02A37; background: rgba(253, 244, 246, 0.9); }
         .lsms-paper-input::placeholder { color: rgba(72, 96, 90, 0.45); }
         .lsms-paper-area {
           border: 1.5px solid #7FA39A;
@@ -434,8 +434,8 @@ export default function CandidatureClient() {
           transition: all 0.2s ease-out;
         }
         .lsms-paper-check:checked {
-          background-color: #0F7A6C;
-          border-color: #0F7A6C;
+          background-color: #1B3A6B;
+          border-color: #1B3A6B;
         }
         .lsms-paper-check:checked::after {
           content: "\u2713";
@@ -449,7 +449,7 @@ export default function CandidatureClient() {
           line-height: 1;
         }
         .lsms-paper-check:focus-visible {
-          outline: 2px solid #0F7A6C;
+          outline: 2px solid #B02A37;
           outline-offset: 2px;
         }
       `}</style>

@@ -147,10 +147,10 @@ export function LsmsFooter() {
         </span>
       </div>
       <div className="flex flex-wrap gap-[22px] text-[13px] uppercase tracking-[0.1em]">
-        <Link href="/accueil" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
+        <Link href="/accueil" className="text-[#8AA39C] hover:text-[#E8566E]">
           Accueil
         </Link>
-        <Link href="/candidature" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
+        <Link href="/candidature" className="text-[#8AA39C] hover:text-[#E8566E]">
           Candidature
         </Link>
       </div>

@@ -101,12 +101,12 @@ export default function IntroClient() {
     <div ref={gateRef} style={{ position: "fixed", inset: 0, zIndex: 200, background: "#030709", overflow: "hidden", transition: "opacity 0.9s ease" }}>
       {/* Fond d'ambiance : halos medical + grille discrete */}
       <div id="introBg" style={{ position: "absolute", inset: 0 }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(900px 640px at 50% 40%, rgba(20,184,166,0.14), transparent 70%)" }} />
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(700px 500px at 85% 90%, rgba(226,59,78,0.10), transparent 65%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(900px 640px at 50% 40%, rgba(200,16,46,0.12), transparent 70%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(700px 500px at 85% 90%, rgba(127,168,217,0.10), transparent 65%)" }} />
         <div
           style={{
             position: "absolute", inset: 0, opacity: 0.5,
-            backgroundImage: "linear-gradient(rgba(94,234,212,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(94,234,212,0.05) 1px, transparent 1px)",
+            backgroundImage: "linear-gradient(rgba(127,168,217,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(127,168,217,0.05) 1px, transparent 1px)",
             backgroundSize: "56px 56px",
           }}
         />
@@ -139,10 +139,10 @@ export default function IntroClient() {
           pointerEvents: ready ? "auto" : "none",
         }}
       >
-        <span style={{ position: "absolute", inset: "-42%", borderRadius: "50%", background: `radial-gradient(circle, rgba(20,184,166,${hover ? 0.5 : 0.22}) 0%, rgba(20,184,166,0.08) 42%, transparent 68%)`, filter: "blur(14px)", transition: "opacity 0.5s ease", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `1px solid rgba(94,234,212,${hover ? 0.85 : 0.34})`, boxShadow: "inset 0 0 34px rgba(20,184,166,0.14)", transition: "border-color 0.4s ease", animation: "lsms-intro-haloPulse 3.4s ease-in-out infinite", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(94,234,212,0.5)", animation: "lsms-intro-ringOut 2.8s cubic-bezier(0.23, 1, 0.32, 1) infinite", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px dashed rgba(94,234,212,0.22)", animation: "lsms-intro-slowSpin 34s linear infinite", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: "-42%", borderRadius: "50%", background: `radial-gradient(circle, rgba(200,16,46,${hover ? 0.45 : 0.2}) 0%, rgba(200,16,46,0.08) 42%, transparent 68%)`, filter: "blur(14px)", transition: "opacity 0.5s ease", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `1px solid rgba(232,86,110,${hover ? 0.85 : 0.34})`, boxShadow: "inset 0 0 34px rgba(200,16,46,0.16)", transition: "border-color 0.4s ease", animation: "lsms-intro-haloPulse 3.4s ease-in-out infinite", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(232,86,110,0.5)", animation: "lsms-intro-ringOut 2.8s cubic-bezier(0.23, 1, 0.32, 1) infinite", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px dashed rgba(232,86,110,0.22)", animation: "lsms-intro-slowSpin 34s linear infinite", pointerEvents: "none" }} />
         {/* Embleme central : navigateur charge /lsms/emblem-hd.png via <img> simple pour rester net sous le vol */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -158,7 +158,7 @@ export default function IntroClient() {
             Touchez l&apos;embleme pour entrer
           </span>
           <span style={{ fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", color: "#7C948E" }}>
-            Cliquez sur le cercle teal
+            Cliquez sur le cercle rouge
           </span>
         </div>
       )}
@@ -173,7 +173,7 @@ export default function IntroClient() {
         </span>
       </div>
 
-      <div ref={flashRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 46%, #E8FFF9, #14B8A6 40%, transparent 72%)", opacity: 0, pointerEvents: "none", zIndex: 9, mixBlendMode: "screen" }} />
+      <div ref={flashRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 46%, #FFE8EC, #C8102E 40%, transparent 72%)", opacity: 0, pointerEvents: "none", zIndex: 9, mixBlendMode: "screen" }} />
     </div>
   );
 }
