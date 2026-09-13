@@ -143,11 +143,14 @@ export default function AccueilClient() {
           <div className="grid items-stretch gap-5 [grid-auto-rows:1fr] [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
             {DIVISIONS.map((d) => (
               <Reveal key={d.slug} className="h-full">
-                <div className="lsms-glass lsms-card flex h-full w-full flex-col items-center justify-center rounded-[30px] px-7 py-[34px] text-center transition-[transform,border-color,box-shadow] duration-500">
+                <Link
+                  href={`/divisions/${d.slug}`}
+                  className="lsms-glass lsms-card flex h-full w-full flex-col items-center justify-center rounded-[30px] px-7 py-[34px] text-center transition-[transform,border-color,box-shadow] duration-500"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={d.logo} alt={d.name} className="mb-[18px] inline-block h-24 w-24 object-contain" />
                   <h3 className="m-0 text-[19px] font-semibold">{d.name}</h3>
-                </div>
+                </Link>
               </Reveal>
             ))}
           </div>
