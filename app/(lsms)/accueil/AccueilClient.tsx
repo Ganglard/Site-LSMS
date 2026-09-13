@@ -6,31 +6,13 @@ import { useEffect, useState } from "react";
 import { Reveal } from "../reveal";
 import { emblemFlight } from "../../emblem-flight";
 
-const SERVICES = [
-  {
-    slug: "urgences",
-    name: "Urgences & Reanimation",
-    icon: "🚑",
-    d: "Reponse immediate aux appels d'urgence sur tout Los Santos, 24h/24.",
-  },
-  {
-    slug: "paramedics",
-    name: "Paramedics",
-    icon: "🩺",
-    d: "Soins pre-hospitaliers, transport de patients et stabilisation sur site.",
-  },
-  {
-    slug: "chirurgie",
-    name: "Chirurgie",
-    icon: "🏥",
-    d: "Blocs operatoires de Central Medical, equipes de garde jour et nuit.",
-  },
-  {
-    slug: "formation",
-    name: "Academie Medicale",
-    icon: "🎓",
-    d: "Formation des nouveaux soignants : protocoles, gestes, triage.",
-  },
+const DIVISIONS = [
+  { slug: "medical-academy", name: "Medical Academy", logo: "/lsms/divisions/medical-academy.png" },
+  { slug: "surgery", name: "Surgery Service", logo: "/lsms/divisions/surgery.png" },
+  { slug: "clinical-laboratory", name: "Clinical Laboratory Service", logo: "/lsms/divisions/clinical-laboratory.png" },
+  { slug: "psychological", name: "Psychological Service", logo: "/lsms/divisions/psychological.png" },
+  { slug: "obstetricians", name: "Obstetricians Services", logo: "/lsms/divisions/obstetricians.png" },
+  { slug: "mortuary", name: "Mortuary Service", logo: "/lsms/divisions/mortuary.png" },
 ];
 
 const AVANTAGES = [
@@ -148,23 +130,23 @@ export default function AccueilClient() {
           </div>
         </section>
 
-        {/* SERVICES / UNITES */}
-        <section id="services" className="pb-[100px] pt-[60px]">
+        {/* DIVISIONS */}
+        <section id="divisions" className="pb-[100px] pt-[60px]">
           <Reveal className="mb-14 text-center">
             <span className="lsms-pill !text-[11.5px] font-medium uppercase tracking-[0.26em] text-[var(--lsms-teal-light)]">
-              Nos unites
+              Nos divisions
             </span>
             <h2 className="mt-[22px] font-bold tracking-[-0.02em]" style={{ fontSize: "clamp(38px,5vw,62px)", fontFamily: "var(--font-saira), sans-serif" }}>
-              Un service, quatre missions
+              Nos divisions recrutent
             </h2>
           </Reveal>
           <div className="grid items-stretch gap-5 [grid-auto-rows:1fr] [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
-            {SERVICES.map((s) => (
-              <Reveal key={s.slug} className="h-full">
+            {DIVISIONS.map((d) => (
+              <Reveal key={d.slug} className="h-full">
                 <div className="lsms-glass lsms-card flex h-full w-full flex-col items-center justify-center rounded-[30px] px-7 py-[34px] text-center transition-[transform,border-color,box-shadow] duration-500">
-                  <span className="mb-[18px] text-[44px] leading-none" aria-hidden>{s.icon}</span>
-                  <h3 className="m-0 text-[19px] font-semibold">{s.name}</h3>
-                  <p className="mt-2.5 mb-0 text-[14px] leading-[1.6] text-[rgba(235,245,242,0.6)]">{s.d}</p>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={d.logo} alt={d.name} className="mb-[18px] inline-block h-24 w-24 object-contain" />
+                  <h3 className="m-0 text-[19px] font-semibold">{d.name}</h3>
                 </div>
               </Reveal>
             ))}
