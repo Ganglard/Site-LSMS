@@ -41,7 +41,7 @@ export default function LsmsLayout({
       className={`${inter.variable} ${saira.variable} ${barlow.variable} ${specialElite.variable} ${caveat.variable}`}
       style={{
         fontFamily: "var(--font-inter), system-ui, sans-serif",
-        background: "#04080a",
+        background: "#050912",
         minHeight: "100vh",
       }}
     >

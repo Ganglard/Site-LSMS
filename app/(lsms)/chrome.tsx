@@ -133,7 +133,7 @@ export function LsmsHeader() {
 
 export function LsmsFooter() {
   return (
-    <footer className="relative z-[1] flex flex-wrap items-center justify-between gap-6 border-t border-white/[0.08] bg-[rgba(3,7,8,0.8)] px-6 py-[38px] sm:px-11">
+    <footer className="relative z-[1] flex flex-wrap items-center justify-between gap-6 border-t border-white/[0.08] bg-[rgba(4,8,16,0.8)] px-6 py-[38px] sm:px-11">
       <div className="flex items-center gap-3.5">
         <Image
           src="/lsms/emblem.png"
@@ -147,10 +147,10 @@ export function LsmsFooter() {
         </span>
       </div>
       <div className="flex flex-wrap gap-[22px] text-[13px] uppercase tracking-[0.1em]">
-        <Link href="/accueil" className="text-[#8AA39C] hover:text-[#E8566E]">
+        <Link href="/accueil" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
           Accueil
         </Link>
-        <Link href="/candidature" className="text-[#8AA39C] hover:text-[#E8566E]">
+        <Link href="/candidature" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
           Candidature
         </Link>
       </div>
