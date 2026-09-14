@@ -17,10 +17,17 @@ export default function IntroClient() {
   const flashRef = useRef<HTMLDivElement>(null);
   const gateRef = useRef<HTMLDivElement>(null);
   const navigatingRef = useRef(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
-  // Pret apres un court temps de pose (poster + halo visibles)
+  // Lecture de la video (en boucle) + phase "ready" rapide
   useEffect(() => {
+    const v = videoRef.current;
+    if (v) {
+      v.muted = true;
+      const p = v.play();
+      void p?.catch(() => {});
+    }
     const t = setTimeout(() => setPhase("ready"), 900);
     return () => clearTimeout(t);
   }, []);
@@ -75,10 +82,15 @@ export default function IntroClient() {
     emblemFlight.materialize({ x: startX, y: startY, size });
 
     // 2) Le fond zoome et s'efface sous l'embleme
+    const v = videoRef.current;
     const bg = document.getElementById("introBg");
     const zoomTarget = "transform 0.7s cubic-bezier(0.5, 0, 0.75, 0.4), opacity 0.6s ease";
-    if (bg) {
-      bg.style.transformOrigin = "50% 43%";
+    if (v) {
+      v.style.transformOrigin = "50% 45%";
+      v.style.transition = zoomTarget;
+      v.style.transform = "scale(1.6)";
+    } else if (bg) {
+      bg.style.transformOrigin = "50% 45%";
       bg.style.transition = zoomTarget;
       bg.style.transform = "scale(1.6)";
     }
@@ -99,15 +111,20 @@ export default function IntroClient() {
 
   return (
     <div ref={gateRef} style={{ position: "fixed", inset: 0, zIndex: 200, background: "#050912", overflow: "hidden", transition: "opacity 0.9s ease" }}>
-      {/* Fond d'ambiance : halos medical + grille discrete */}
+      {/* Fond cinematique : video casier -> badge (fallback poster) */}
       <div id="introBg" style={{ position: "absolute", inset: 0 }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(900px 640px at 50% 40%, rgba(59,110,220,0.14), transparent 70%)" }} />
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(700px 500px at 85% 90%, rgba(147,197,253,0.08), transparent 65%)" }} />
-        <div
+        <video
+          ref={videoRef}
+          src="/lsms/uploads/intro-emblem-zoom.mp4"
+          poster="/lsms/uploads/intro-emblem-poster.jpg"
+          muted
+          playsInline
+          autoPlay
+          loop
+          preload="auto"
           style={{
-            position: "absolute", inset: 0, opacity: 0.5,
-            backgroundImage: "linear-gradient(rgba(127,168,217,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(127,168,217,0.05) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", background: "#050912",
           }}
         />
       </div>
