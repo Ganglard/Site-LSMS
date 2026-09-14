@@ -17,14 +17,18 @@ import { emblemFlight } from "../emblem-flight";
  * logo puis vole vers le hero de /accueil.
  */
 
-// --- Geometrie mesuree sur la derniere frame de la video (poster) ---
+// --- Geometrie du logo dans la derniere frame de la video ---
+// Centre et diametre mesures sur la frame finale ; l'anneau cliquable est
+// volontairement PLUS LARGE que le logo (halo de selection) : quelques pixels
+// d'erreur ne se voient plus, contrairement a un anneau colle au bord.
 const VIDEO_W = 1920;
 const VIDEO_H = 1040;
-const BADGE_CX = 0.51; // centre du logo en % de la largeur video
-const BADGE_CY = 0.528; // centre du logo en % de la hauteur video
-const BADGE_DIA = 0.26; // diametre du logo en % de la largeur video
+const BADGE_CX = 0.505; // centre du logo (% largeur video)
+const BADGE_CY = 0.5; // centre du logo (% hauteur video)
+const BADGE_DIA = 0.285; // diametre du logo (% largeur video) — pour le vol
+const RING_DIA = 0.34; // diametre de l'anneau cliquable (% largeur video) — halo large
 
-/** Position + taille du logo de la video dans le viewport (math de object-fit: cover). */
+/** Geometrie (centre + tailles) du logo de la video dans le viewport, math object-fit: cover. */
 function badgeInViewport() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -33,10 +37,13 @@ function badgeInViewport() {
   const dh = VIDEO_H * scale;
   const ox = (vw - dw) / 2;
   const oy = (vh - dh) / 2;
+  const x = ox + BADGE_CX * dw;
+  const y = oy + BADGE_CY * dh;
   return {
-    x: ox + BADGE_CX * dw,
-    y: oy + BADGE_CY * dh,
-    size: BADGE_DIA * dw,
+    x,
+    y,
+    size: BADGE_DIA * dw, // logo seul (depart du vol)
+    ring: RING_DIA * dw, // anneau cliquable (plus large)
   };
 }
 
@@ -76,11 +83,11 @@ export default function IntroClient() {
     const place = () => {
       const el = hotspotRef.current;
       if (!el) return;
-      const { x, y, size } = badgeInViewport();
+      const { x, y, ring } = badgeInViewport();
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
-      el.style.width = `${size}px`;
-      el.style.height = `${size}px`;
+      el.style.width = `${ring}px`;
+      el.style.height = `${ring}px`;
     };
     place();
     window.addEventListener("resize", place);
@@ -120,7 +127,7 @@ export default function IntroClient() {
     sessionStorage.setItem("lsmsIntroPlayed", "1");
 
     // Position/taille exactes du logo affiche par la video
-    const { x, y, size } = badgeInViewport();
+    const { x, y, size } = badgeInViewport(); // size = logo seul
 
     // Flash bleu
     if (flashRef.current) {
@@ -220,7 +227,7 @@ export default function IntroClient() {
         <span style={{ position: "absolute", inset: "-38%", borderRadius: "50%", background: `radial-gradient(circle, rgba(59,110,220,${hover ? 0.42 : 0.16}) 0%, rgba(59,110,220,0.06) 45%, transparent 70%)`, filter: "blur(14px)", transition: "opacity 0.5s ease", pointerEvents: "none" }} />
         <span style={{ position: "absolute", inset: "0", borderRadius: "50%", border: `1px solid rgba(147,197,253,${hover ? 0.7 : 0.25})`, boxShadow: "inset 0 0 40px rgba(59,110,220,0.12)", transition: "border-color 0.4s ease", animation: "lsms-intro-haloPulse 3.4s ease-in-out infinite", pointerEvents: "none" }} />
         <span style={{ position: "absolute", inset: "0", borderRadius: "50%", border: "1px solid rgba(147,197,253,0.4)", animation: "lsms-intro-ringOut 2.8s cubic-bezier(0.23, 1, 0.32, 1) infinite", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: "4%", borderRadius: "50%", border: "1px dashed rgba(147,197,253,0.18)", animation: "lsms-intro-slowSpin 34s linear infinite", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: "6%", borderRadius: "50%", border: "1px dashed rgba(147,197,253,0.16)", animation: "lsms-intro-slowSpin 34s linear infinite", pointerEvents: "none" }} />
       </button>
 
       {ready && (
