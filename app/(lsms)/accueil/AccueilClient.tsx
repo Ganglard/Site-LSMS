@@ -50,7 +50,9 @@ export default function AccueilClient() {
     heroEmblem.style.opacity = "0";
     requestAnimationFrame(() => requestAnimationFrame(async () => {
       const r = heroEmblem.getBoundingClientRect();
-      await emblemFlight.flyTo({ x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width, duration: 780 });
+      // Le logo de la video est plus grand que celui du hero : le vol reduit
+      // l'echelle progressivement pour finir pile a la taille du hero (crossfade invisible).
+      await emblemFlight.flyTo({ x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width, duration: 900 });
       heroEmblem.style.transition = "opacity 0.45s ease";
       heroEmblem.style.opacity = "1";
       emblemFlight.settle();

@@ -3,15 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Calque persistant de l'embleme volant (etoile de vie LSMS).
- * Meme mecanique que le badge volant LSPD : monte dans le layout racine,
- * il survit a la navigation /intro -> /accueil (navigation client) pour
- * une transition continue.
+ * Calque persistant de l'embleme volant (logo LSMS).
+ *
+ * Monte dans le layout RACINE : il survit a la navigation /intro -> /accueil
+ * (navigation client, pas de reload), ce qui permet une transition vraiment
+ * continue — le meme element <img> vole du logo affiche par la video jusqu'au
+ * hero de l'accueil.
+ *
+ * Le vol interpole aussi l'ECHELLE (scale) pour finir exactement a la taille
+ * du logo du hero : la reprise est invisible.
  *
  * API imperative (singleton) :
- *   emblemFlight.materialize({x, y, size})
- *   emblemFlight.flyTo({x, y, size, duration}) — Promise
- *   emblemFlight.settle()
+ *   emblemFlight.materialize({x, y, size})      — apparait (blur -> net)
+ *   emblemFlight.flyTo({x, y, size, duration})  — vole vers la cible (Promise)
+ *   emblemFlight.settle()                       — fondu de sortie, libere
  *   emblemFlight.isActive()
  */
 
@@ -47,6 +52,7 @@ const SHADOW = "drop-shadow(0 30px 50px rgba(0,0,0,0.75))";
 export function EmblemFlightProvider({ children }: { children: React.ReactNode }) {
   const imgRef = useRef<HTMLImageElement>(null);
   const activeRef = useRef(false);
+  const currentSizeRef = useRef(0);
   const [, force] = useState(0);
   const reducedRef = useRef(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -71,13 +77,14 @@ export function EmblemFlightProvider({ children }: { children: React.ReactNode }
       return t;
     };
 
-    const place = (x: number, y: number) => {
-      el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+    const place = (x: number, y: number, scale = 1) => {
+      el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${scale})`;
     };
 
     controller = {
       materialize({ x, y, size = 240 }) {
         activeRef.current = true;
+        currentSizeRef.current = size;
         force((n) => n + 1);
         el.style.transition = "none";
         el.style.width = `${size}px`;
@@ -85,12 +92,12 @@ export function EmblemFlightProvider({ children }: { children: React.ReactNode }
         if (reducedRef.current) {
           el.style.filter = SHADOW;
           el.style.opacity = "1";
-          place(x, y);
+          place(x, y, 1);
           return;
         }
         el.style.filter = `${SHADOW} blur(6px) brightness(1.35)`;
         el.style.opacity = "0";
-        place(x, y);
+        place(x, y, 1);
         requestAnimationFrame(() =>
           requestAnimationFrame(() => {
             el.style.transition = `opacity 260ms ease-out, filter 380ms ${EASE_FLIGHT}`;
@@ -103,6 +110,7 @@ export function EmblemFlightProvider({ children }: { children: React.ReactNode }
       flyTo({ x, y, size, duration = 620 }) {
         return new Promise<void>((resolve) => {
           if (!activeRef.current) return resolve();
+          const target = size && currentSizeRef.current ? size / currentSizeRef.current : 1;
           const done = () => {
             el.removeEventListener("transitionend", onEnd);
             resolve();
@@ -111,14 +119,14 @@ export function EmblemFlightProvider({ children }: { children: React.ReactNode }
             if (e.propertyName === "transform") done();
           };
           if (reducedRef.current) {
-            place(x, y);
+            place(x, y, target);
             resolve();
             return;
           }
           el.style.transition = `transform ${duration}ms ${EASE_FLIGHT}`;
-          place(x, y);
+          place(x, y, target);
           el.addEventListener("transitionend", onEnd);
-          later(done, duration + 120);
+          later(done, duration + 150);
         });
       },
 
@@ -156,7 +164,7 @@ export function EmblemFlightProvider({ children }: { children: React.ReactNode }
           pointerEvents: "none",
           opacity: 0,
           filter: SHADOW,
-          willChange: "transform",
+          willChange: "transform, opacity",
         }}
       />
     </>

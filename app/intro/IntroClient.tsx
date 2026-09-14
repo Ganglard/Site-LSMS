@@ -6,30 +6,89 @@ import { emblemFlight } from "../emblem-flight";
 
 /**
  * Intro cinematique LSMS.
- * Au clic : flash teal -> l'embleme se materialise -> vol continu vers /accueil
- * (navigation client, le calque ne se demonte jamais).
- * Pas de video pour l'instant : un poster d'ambiance + halo pulse.
- * Pour brancher une video plus tard : /lsms/uploads/intro-emblem-zoom.mp4.
+ *
+ * La video joue UNE SEULE FOIS et s'arrete sur sa derniere frame : le logo
+ * deja tenu en main, centre dans l'image. Aucun logo n'est superpose par le
+ * site — le clic se fait sur un anneau lumineux qui epouse exactement le logo
+ * de la video (position/taille calculees a partir de la frame mesuree).
+ *
+ * Au clic : l'anneau s'efface, la video zoome et disparait, et le calque
+ * d'embleme volant (emblem-flight) prend le relais a la position exacte du
+ * logo puis vole vers le hero de /accueil.
  */
+
+// --- Geometrie mesuree sur la derniere frame de la video (poster) ---
+const VIDEO_W = 1920;
+const VIDEO_H = 1040;
+const BADGE_CX = 0.51; // centre du logo en % de la largeur video
+const BADGE_CY = 0.528; // centre du logo en % de la hauteur video
+const BADGE_DIA = 0.26; // diametre du logo en % de la largeur video
+
+/** Position + taille du logo de la video dans le viewport (math de object-fit: cover). */
+function badgeInViewport() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const scale = Math.max(vw / VIDEO_W, vh / VIDEO_H);
+  const dw = VIDEO_W * scale;
+  const dh = VIDEO_H * scale;
+  const ox = (vw - dw) / 2;
+  const oy = (vh - dh) / 2;
+  return {
+    x: ox + BADGE_CX * dw,
+    y: oy + BADGE_CY * dh,
+    size: BADGE_DIA * dw,
+  };
+}
+
 export default function IntroClient() {
   const [phase, setPhase] = useState<"entry" | "ready" | "flying">("entry");
   const [hover, setHover] = useState(false);
   const flashRef = useRef<HTMLDivElement>(null);
   const gateRef = useRef<HTMLDivElement>(null);
-  const navigatingRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hotspotRef = useRef<HTMLButtonElement>(null);
+  const navigatingRef = useRef(false);
   const router = useRouter();
 
-  // Lecture de la video (en boucle) + phase "ready" rapide
+  // La video joue une seule fois (pas de loop) et "ready" arrive sur ended :
+  // l'anneau cliquable apparait exactement quand l'image s'immobilise sur le logo.
   useEffect(() => {
     const v = videoRef.current;
-    if (v) {
-      v.muted = true;
-      const p = v.play();
-      void p?.catch(() => {});
-    }
-    const t = setTimeout(() => setPhase("ready"), 900);
-    return () => clearTimeout(t);
+    if (!v) return;
+    v.muted = true;
+    void v.play().catch(() => {});
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      setPhase("ready");
+    };
+    v.addEventListener("ended", finish);
+    const failsafe = setTimeout(finish, 12000);
+    return () => {
+      v.removeEventListener("ended", finish);
+      clearTimeout(failsafe);
+    };
+  }, []);
+
+  // Anneau cliquable : epouse le logo de la video (suit le redimensionnement)
+  useEffect(() => {
+    const place = () => {
+      const el = hotspotRef.current;
+      if (!el) return;
+      const { x, y, size } = badgeInViewport();
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+    };
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("orientationchange", place);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("orientationchange", place);
+    };
   }, []);
 
   // Lock scroll hors vol
@@ -60,10 +119,13 @@ export default function IntroClient() {
     setPhase("flying");
     sessionStorage.setItem("lsmsIntroPlayed", "1");
 
-    // Flash teal
+    // Position/taille exactes du logo affiche par la video
+    const { x, y, size } = badgeInViewport();
+
+    // Flash bleu
     if (flashRef.current) {
       flashRef.current.style.transition = "opacity 0.12s ease-out";
-      flashRef.current.style.opacity = "0.5";
+      flashRef.current.style.opacity = "0.42";
       setTimeout(() => {
         if (flashRef.current) {
           flashRef.current.style.transition = "opacity 0.3s ease-out";
@@ -72,27 +134,24 @@ export default function IntroClient() {
       }, 130);
     }
 
-    const hotspot = document.getElementById("introHotspot");
-    const hr = hotspot?.getBoundingClientRect();
-    const size = 240;
-    const startX = hr ? hr.left + hr.width / 2 : window.innerWidth / 2;
-    const startY = hr ? hr.top + hr.height / 2 : window.innerHeight * 0.43;
+    // L'anneau disparait immediatement
+    if (hotspotRef.current) {
+      hotspotRef.current.style.transition = "opacity 0.25s ease";
+      hotspotRef.current.style.opacity = "0";
+    }
 
-    // 1) L'embleme se materialise
-    emblemFlight.materialize({ x: startX, y: startY, size });
+    // 1) Le calque volant se materialise EXACTEMENT sur le logo de la video :
+    //    meme position, meme taille -> aucun saut perceptible.
+    emblemFlight.materialize({ x, y, size });
 
-    // 2) Le fond zoome et s'efface sous l'embleme
+    // 2) La video zoome et s'efface sous l'embleme volant
     const v = videoRef.current;
-    const bg = document.getElementById("introBg");
-    const zoomTarget = "transform 0.7s cubic-bezier(0.5, 0, 0.75, 0.4), opacity 0.6s ease";
+    const zoomTarget = "transform 0.75s cubic-bezier(0.5, 0, 0.75, 0.4), opacity 0.6s ease";
     if (v) {
-      v.style.transformOrigin = "50% 45%";
+      v.style.transformOrigin = `${BADGE_CX * 100}% ${BADGE_CY * 100}%`;
       v.style.transition = zoomTarget;
-      v.style.transform = "scale(1.6)";
-    } else if (bg) {
-      bg.style.transformOrigin = "50% 45%";
-      bg.style.transition = zoomTarget;
-      bg.style.transform = "scale(1.6)";
+      v.style.transform = "scale(1.5)";
+      v.style.opacity = "0";
     }
     setTimeout(() => {
       if (gateRef.current) {
@@ -101,37 +160,39 @@ export default function IntroClient() {
       }
     }, 150);
 
-    // 3) Navigation client SANS reload : l'embleme reste monte sur son calque.
+    // 3) Navigation client SANS reload : le calque volant reste monte,
+    //    /accueil mesure le hero et orchestre le vol unique.
     setTimeout(() => {
       router.push("/accueil?fromIntro=1");
-    }, 260);
+    }, 300);
   };
 
   const ready = phase === "ready";
 
   return (
     <div ref={gateRef} style={{ position: "fixed", inset: 0, zIndex: 200, background: "#050912", overflow: "hidden", transition: "opacity 0.9s ease" }}>
-      {/* Fond cinematique : video casier -> badge (fallback poster) */}
-      <div id="introBg" style={{ position: "absolute", inset: 0 }}>
-        <video
-          ref={videoRef}
-          src="/lsms/uploads/intro-emblem-zoom.mp4"
-          poster="/lsms/uploads/intro-emblem-poster.jpg"
-          muted
-          playsInline
-          autoPlay
-          loop
-          preload="auto"
-          style={{
-            position: "absolute", inset: 0, width: "100%", height: "100%",
-            objectFit: "cover", background: "#050912",
-          }}
-        />
-      </div>
+      {/* Video casier -> logo : jouee UNE fois, s'arrete sur le logo (poster = meme frame) */}
+      <video
+        ref={videoRef}
+        src="/lsms/uploads/intro-emblem-zoom.mp4"
+        poster="/lsms/uploads/intro-emblem-poster.jpg"
+        muted
+        playsInline
+        autoPlay
+        preload="auto"
+        style={{
+          position: "absolute", inset: 0, width: "100%", height: "100%",
+          objectFit: "cover", background: "#050912",
+          transition: "opacity 0.6s ease",
+        }}
+      />
 
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 46%, transparent 30%, rgba(3,7,9,0.35) 75%)", pointerEvents: "none" }} />
+      {/* Vignettage discret */}
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 50%, transparent 32%, rgba(5,9,18,0.35) 80%)", pointerEvents: "none" }} />
 
+      {/* Anneau cliquable, cale sur le logo de la video (aucun logo ajoute) */}
       <button
+        ref={hotspotRef}
         id="introHotspot"
         type="button"
         onClick={enter}
@@ -141,9 +202,9 @@ export default function IntroClient() {
         style={{
           position: "absolute",
           left: "50%",
-          top: "43%",
-          width: "42vmin",
-          height: "42vmin",
+          top: "50%",
+          width: "26vw",
+          height: "26vw",
           transform: "translate(-50%,-50%)",
           borderRadius: "50%",
           border: "none",
@@ -156,26 +217,19 @@ export default function IntroClient() {
           pointerEvents: ready ? "auto" : "none",
         }}
       >
-        <span style={{ position: "absolute", inset: "-42%", borderRadius: "50%", background: `radial-gradient(circle, rgba(59,110,220,${hover ? 0.5 : 0.22}) 0%, rgba(59,110,220,0.08) 42%, transparent 68%)`, filter: "blur(14px)", transition: "opacity 0.5s ease", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `1px solid rgba(147,197,253,${hover ? 0.85 : 0.34})`, boxShadow: "inset 0 0 34px rgba(59,110,220,0.16)", transition: "border-color 0.4s ease", animation: "lsms-intro-haloPulse 3.4s ease-in-out infinite", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(147,197,253,0.5)", animation: "lsms-intro-ringOut 2.8s cubic-bezier(0.23, 1, 0.32, 1) infinite", pointerEvents: "none" }} />
-        <span style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px dashed rgba(147,197,253,0.22)", animation: "lsms-intro-slowSpin 34s linear infinite", pointerEvents: "none" }} />
-        {/* Embleme central : navigateur charge /lsms/emblem-hd.png via <img> simple pour rester net sous le vol */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/lsms/emblem-hd.png"
-          alt=""
-          style={{ position: "absolute", left: "50%", top: "50%", width: "42%", transform: "translate(-50%,-50%)", filter: "drop-shadow(0 18px 40px rgba(0,0,0,0.7))" }}
-        />
+        <span style={{ position: "absolute", inset: "-38%", borderRadius: "50%", background: `radial-gradient(circle, rgba(59,110,220,${hover ? 0.42 : 0.16}) 0%, rgba(59,110,220,0.06) 45%, transparent 70%)`, filter: "blur(14px)", transition: "opacity 0.5s ease", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: "0", borderRadius: "50%", border: `1px solid rgba(147,197,253,${hover ? 0.7 : 0.25})`, boxShadow: "inset 0 0 40px rgba(59,110,220,0.12)", transition: "border-color 0.4s ease", animation: "lsms-intro-haloPulse 3.4s ease-in-out infinite", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: "0", borderRadius: "50%", border: "1px solid rgba(147,197,253,0.4)", animation: "lsms-intro-ringOut 2.8s cubic-bezier(0.23, 1, 0.32, 1) infinite", pointerEvents: "none" }} />
+        <span style={{ position: "absolute", inset: "4%", borderRadius: "50%", border: "1px dashed rgba(147,197,253,0.18)", animation: "lsms-intro-slowSpin 34s linear infinite", pointerEvents: "none" }} />
       </button>
 
       {ready && (
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: "9vh", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, animation: "lsms-intro-hintUp 1s cubic-bezier(0.23, 1, 0.32, 1) both", pointerEvents: "none" }}>
-          <span style={{ fontFamily: "var(--font-saira), sans-serif", fontSize: 27, fontWeight: 600, letterSpacing: "0.01em", color: "#F2F7F6", textShadow: "0 4px 30px rgba(0,0,0,0.8)" }}>
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: "7vh", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, animation: "lsms-intro-hintUp 1s cubic-bezier(0.23, 1, 0.32, 1) both", pointerEvents: "none" }}>
+          <span style={{ fontFamily: "var(--font-saira), sans-serif", fontSize: 27, fontWeight: 600, letterSpacing: "0.01em", color: "#F2F7F6", textShadow: "0 4px 30px rgba(0,0,0,0.9)" }}>
             Touchez l&apos;embleme pour entrer
           </span>
-          <span style={{ fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", color: "#7C948E" }}>
-            Cliquez sur le cercle bleu
+          <span style={{ fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", color: "#93B4D9" }}>
+            Cliquez sur l&apos;anneau autour du logo
           </span>
         </div>
       )}
@@ -185,12 +239,12 @@ export default function IntroClient() {
       </button>
 
       <div style={{ position: "absolute", left: 30, bottom: 26, display: "flex", alignItems: "center", gap: 12, zIndex: 6 }}>
-        <span style={{ fontFamily: "var(--font-saira), sans-serif", fontSize: 12, letterSpacing: "0.32em", textTransform: "uppercase", color: "#7C948E" }}>
+        <span style={{ fontFamily: "var(--font-saira), sans-serif", fontSize: 12, letterSpacing: "0.32em", textTransform: "uppercase", color: "#93B4D9" }}>
           LSMS · Central Medical · Pillbox Hill
         </span>
       </div>
 
-      <div ref={flashRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 46%, #EAF3FF, #3B6EDC 40%, transparent 72%)", opacity: 0, pointerEvents: "none", zIndex: 9, mixBlendMode: "screen" }} />
+      <div ref={flashRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 50%, #F2F8FF, #3B6EDC 42%, transparent 72%)", opacity: 0, pointerEvents: "none", zIndex: 9, mixBlendMode: "screen" }} />
     </div>
   );
 }
