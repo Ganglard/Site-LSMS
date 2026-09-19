@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "../lsms.css";
 
 const REF_PREFIX = "LSMS-";
 const DRAFT_KEY = "lsms-form101-draft";
+const INTRO_KEY = "lsmsFormIntroPlayed";
 const SUBMIT_ENDPOINT = "/api/candidature";
 
 type Section = {
@@ -85,7 +86,60 @@ export default function CandidatureClient() {
   const [reference, setReference] = useState("");
   const [draftShown, setDraftShown] = useState(false);
   const [authUser, setAuthUser] = useState<{ authenticated: boolean; userId: string | null } | null>(null);
+  // Intro video : la feuille n'apparait qu'apres la cinematique, en fondu enchaine
+  const [introDone, setIntroDone] = useState(false);
+  const [closing, setClosing] = useState(false); // fondu de sortie de l'overlay
+  const [formShown, setFormShown] = useState(false); // entree de la feuille
   const sheetRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const introClosedRef = useRef(false);
+
+  /** Ferme l'intro et enchaine l'entree de la feuille (transition continue). */
+  const closeIntro = useCallback(() => {
+    if (introClosedRef.current) return;
+    introClosedRef.current = true;
+    setClosing(true);
+    setFormShown(true);
+    setTimeout(() => setIntroDone(true), 800);
+  }, []);
+
+  // Lecture de la video d'intro (une seule fois) + failsafe + reduced-motion
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const alreadyPlayed = sessionStorage.getItem(INTRO_KEY) === "1";
+    if (reduced || alreadyPlayed) {
+      introClosedRef.current = true;
+      setIntroDone(true);
+      setFormShown(true);
+      return;
+    }
+    const v = videoRef.current;
+    if (!v) {
+      const t = setTimeout(() => closeIntro(), 120);
+      return () => clearTimeout(t);
+    }
+    v.muted = true;
+    sessionStorage.setItem(INTRO_KEY, "1");
+    void v.play().catch(() => {});
+    const onEnded = () => closeIntro();
+    v.addEventListener("ended", onEnded);
+    const failsafe = setTimeout(() => closeIntro(), 9000);
+    return () => {
+      v.removeEventListener("ended", onEnded);
+      clearTimeout(failsafe);
+    };
+  }, [closeIntro]);
+
+  // Pas de scroll pendant la cinematique
+  useEffect(() => {
+    if (introDone) return;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [introDone]);
 
   // Auth Discord au montage
   useEffect(() => {
@@ -194,13 +248,55 @@ export default function CandidatureClient() {
       className="lsms-root"
       style={{ background: "radial-gradient(1200px 700px at 50% 8%, rgba(59,110,220,0.10), transparent 70%), radial-gradient(900px 900px at 85% 100%, rgba(30,58,138,0.10), transparent 65%), #060b16", backgroundAttachment: "fixed" }}
     >
-      <div className="relative z-[1] mx-auto max-w-[920px] px-[18px] pb-[90px] pt-[46px]">
+      {/* INTRO VIDEO : le bureau -> formulaire, puis fondu enchaine sur la vraie feuille */}
+      {!introDone && (
+        <div
+          className="fixed inset-0 z-[300] flex items-center justify-center overflow-hidden bg-[#050912]"
+          style={{ opacity: closing ? 0 : 1, transition: "opacity 0.75s cubic-bezier(0.23,1,0.32,1)" }}
+        >
+          <video
+            ref={videoRef}
+            src="/lsms/uploads/bureau-lsms-zoom.mp4"
+            poster="/lsms/uploads/bureau-lsms-poster.jpg"
+            muted
+            playsInline
+            autoPlay
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <span
+            className="absolute bottom-[34px] left-9 z-[5] text-[12px] uppercase tracking-[0.3em] text-white/55"
+            style={{ fontFamily: "var(--font-saira), sans-serif" }}
+          >
+            Direction des ressources humaines &middot; Central Medical, Pillbox Hill
+          </span>
+          <button
+            type="button"
+            onClick={closeIntro}
+            className="absolute right-[34px] top-[30px] z-[5] cursor-pointer rounded-full border border-white/25 bg-black/45 px-6 py-2.5 text-[13px] uppercase tracking-[0.2em] text-white/85 transition-colors duration-300 hover:bg-black/65"
+            style={{ fontFamily: "var(--font-saira), sans-serif" }}
+          >
+            Passer
+          </button>
+        </div>
+      )}
+
+      {/* Contenu : entree en douceur pendant que l'intro s'effface (fondu enchaine) */}
+      <div
+        className="relative z-[1] mx-auto max-w-[920px] px-[18px] pb-[90px] pt-[46px]"
+        style={{
+          opacity: formShown ? 1 : 0,
+          transform: formShown ? "none" : "scale(1.035)",
+          transition: "opacity 1.05s cubic-bezier(0.23,1,0.32,1), transform 1.45s cubic-bezier(0.23,1,0.32,1)",
+          willChange: "opacity, transform",
+        }}
+      >
         <div className="mb-[30px] flex flex-wrap items-center justify-between gap-4">
-          <a href="/accueil" className="flex items-center gap-2.5 text-[14px] font-semibold uppercase tracking-[0.16em] text-[#9FE8DB] hover:text-[#C9F5EC]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
+          <a href="/accueil" className="flex items-center gap-2.5 text-[14px] font-semibold uppercase tracking-[0.16em] text-[#9FC6F5] hover:text-[#C9E0FF]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
             <Image src="/lsms/emblem.png" alt="" width={30} height={30} className="h-auto w-[30px]" />
             LOS SANTOS MEDICAL SERVICES
           </a>
-          <a href="/accueil" className="text-[14px] font-semibold uppercase tracking-[0.16em] text-[#C9F5EC] hover:text-[#EAFFF9]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
+          <a href="/accueil" className="text-[14px] font-semibold uppercase tracking-[0.16em] text-[#C9E0FF] hover:text-[#EAF3FF]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
             &larr; Retour au site
           </a>
         </div>
