@@ -256,8 +256,8 @@ export default function CandidatureClient() {
         >
           <video
             ref={videoRef}
-            src="/lsms/uploads/bureau-lsms-zoom.mp4"
-            poster="/lsms/uploads/bureau-lsms-poster.jpg"
+            src="/lsms/uploads/bureau-lsms-zoom-v2.mp4"
+            poster="/lsms/uploads/bureau-lsms-poster-v2.jpg"
             muted
             playsInline
             autoPlay
