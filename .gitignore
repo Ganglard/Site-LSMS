@@ -11,3 +11,5 @@ build/
 *.log
 pnpm-lock.yaml
 .vercel-payload.json
+.vercel
+.env*

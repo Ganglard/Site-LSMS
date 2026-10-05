@@ -1,29 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookies";
-import { promises as fs } from "fs";
-import path from "path";
 
 export const runtime = "nodejs";
 
 /**
- * POST /api/candidature — enregistre le dossier LSMS.
+ * POST /api/candidature — transmet le dossier LSMS au bot Modmail LSMS.
  *
- * Etat actuel : PAS de bot Discord. Le dossier est stocke en local dans
- * `candidatures/` (JSON horodate + reference). L'ID Discord vient
- * EXCLUSIVEMENT du cookie OAuth (le client ne peut pas le falsifier).
- *
- * Branchement bot plus tard : remplacer le bloc "STOCKAGE LOCAL" par le
- * POST vers MODMAIL_API_THREAD_URL avec X-Relay-Key (meme pattern que le
- * site LSPD : site-lspa/app/api/candidature/route.ts).
+ * Relais serveur-à-serveur vers MODMAIL_API_THREAD_URL (plugin api-thread du
+ * bot) avec la clé partagée X-Relay-Key — même pattern que le site LSPD.
+ * L'ID Discord vient EXCLUSIVEMENT du cookie OAuth (le client ne peut pas
+ * le falsifier).
  */
 
-const DATA_DIR = path.join(process.cwd(), "candidatures");
+const MODMAIL_URL = process.env.MODMAIL_API_THREAD_URL ?? "http://127.0.0.1:8788/api/thread";
+const RELAY_KEY = process.env.RELAY_KEY ?? "";
 
 const FIELD_NAME_MAX = 256;
 const FIELD_VALUE_CHUNK = 1000;
 
 type EmbedField = { name: string; value: string; inline?: boolean };
+type Embed = { title?: string; description?: string; color?: number; fields?: EmbedField[]; footer?: { text?: string }; timestamp?: string };
 type Payload = { reference?: string; values?: Record<string, string>; checks?: Record<string, boolean> };
 
 function chunkText(s: string): string[] {
@@ -90,6 +87,13 @@ function buildDossierFields(values: Record<string, string>, checks: Record<strin
 }
 
 export async function POST(req: NextRequest) {
+  if (!RELAY_KEY) {
+    return NextResponse.json(
+      { success: false, error: "Relais non configuré : RELAY_KEY absente du serveur (.env.local)" },
+      { status: 500 }
+    );
+  }
+
   let body: Payload;
   try {
     body = await req.json();
@@ -125,32 +129,80 @@ export async function POST(req: NextRequest) {
 
   const fields = buildDossierFields(values, checks);
   const reference = (body.reference ?? "").replace(/[^\w-]/g, "").slice(0, 32);
-  const candidateName = `${(values.prenom ?? "").trim()} ${(values.nom ?? "").trim()}`.trim() || "Candidat";
 
-  // ----- STOCKAGE LOCAL (a remplacer par le POST ModMail quand le bot existe) -----
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    const record = {
-      reference: reference || `LSMS-${Date.now().toString().slice(-6)}`,
-      receivedAt: new Date().toISOString(),
-      discordId: userId,
-      candidateName,
-      fields,
-      values,
-      checks,
+  // Découpe en embeds respectant la limite Discord (25 champs, < 6000 chars/embed)
+  const candidateName = `${(values.prenom ?? "").trim()} ${(values.nom ?? "").trim()}`.trim() || "Candidat";
+  const embedLen = (e: Embed) =>
+    (e.title ?? "").length + (e.description ?? "").length +
+    (e.footer?.text ?? "").length +
+    (e.fields ?? []).reduce((n, f) => n + f.name.length + f.value.length, 0);
+
+  const embeds: Embed[] = [];
+  let cur: EmbedField[] = [];
+  let curLen = 0;
+  const pushEmbed = (fieldsPart: EmbedField[], isFirst: boolean) => {
+    const base: Embed = {
+      title: isFirst ? "🩺 Nouvelle candidature — FORM LSMS-101" : "FORM LSMS-101 (suite)",
+      color: 0x2563eb,
+      fields: fieldsPart,
+      ...(isFirst
+        ? {
+            description: `Dossier de **${candidateName}** reçu via le site de recrutement.\nID Discord : \`${userId}\``,
+            footer: { text: `Réf. ${reference || "LSMS-XXX"} · Direction des ressources humaines · Central Medical, Pillbox Hill` },
+            timestamp: new Date().toISOString(),
+          }
+        : {}),
     };
-    await fs.writeFile(
-      path.join(DATA_DIR, `${record.reference}.json`),
-      JSON.stringify(record, null, 2),
-      "utf8"
-    );
+    embeds.push(base);
+  };
+  for (const f of fields) {
+    const L = f.name.length + f.value.length;
+    if (cur.length >= 25 || (cur.length && curLen + L > 5600)) {
+      pushEmbed(cur, embeds.length === 0);
+      cur = [];
+      curLen = 0;
+    }
+    cur.push(f);
+    curLen += L;
+  }
+  if (cur.length) pushEmbed(cur, embeds.length === 0);
+
+  const modmailBody = {
+    userId,
+    reference,
+    candidate_name: candidateName,
+    values, // passés tels quels : le plugin Modmail revalide
+    checks,
+  };
+
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    const upstream = await fetch(MODMAIL_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Relay-Key": RELAY_KEY },
+      body: JSON.stringify(modmailBody),
+      signal: ctrl.signal,
+    }).finally(() => clearTimeout(timer));
+
+    const data = (await upstream.json().catch(() => ({}))) as { success?: boolean; error?: string; threadId?: string; dmBlocked?: boolean; existing?: boolean };
+
+    // 409 = le candidat avait déjà un thread ouvert : le dossier y a été ajouté (succès)
+    if (upstream.status === 409 && data.success !== false) {
+      return NextResponse.json({ success: true, threadId: data.threadId, existing: true });
+    }
+    if (!upstream.ok || data.success === false) {
+      return NextResponse.json(
+        { success: false, error: data.error || `Le bureau des ressources humaines a refusé le dossier (HTTP ${upstream.status})` },
+        { status: upstream.status === 401 ? 502 : upstream.status }
+      );
+    }
+    return NextResponse.json({ success: true, threadId: data.threadId, dmBlocked: Boolean(data.dmBlocked) });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json(
-      { success: false, error: `Enregistrement impossible (${msg})` },
-      { status: 500 }
+      { success: false, error: `Bureau des ressources humaines injoignable (${msg}). Le bot est-il lancé ?` },
+      { status: 502 }
     );
   }
-
-  return NextResponse.json({ success: true, reference });
 }
