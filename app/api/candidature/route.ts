@@ -5,12 +5,10 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookies";
 export const runtime = "nodejs";
 
 /**
- * POST /api/candidature — transmet le dossier LSMS au bot Modmail LSMS.
+ * POST /api/candidature : transmet le dossier au bot Modmail LSMS.
  *
- * Relais serveur-à-serveur vers MODMAIL_API_THREAD_URL (plugin api-thread du
- * bot) avec la clé partagée X-Relay-Key — même pattern que le site LSPD.
- * L'ID Discord vient EXCLUSIVEMENT du cookie OAuth (le client ne peut pas
- * le falsifier).
+ * Relais serveur à serveur vers MODMAIL_API_THREAD_URL, protégé par la clé
+ * X-Relay-Key. L'ID Discord vient uniquement du cookie OAuth.
  */
 
 const MODMAIL_URL = process.env.MODMAIL_API_THREAD_URL ?? "http://127.0.0.1:8788/api/thread";
@@ -29,7 +27,7 @@ function chunkText(s: string): string[] {
   return parts;
 }
 
-/** Champs du dossier — normalises aux limites Discord (pret pour le bot). */
+/** Champs du dossier, découpés selon les limites de Discord. */
 function buildDossierFields(values: Record<string, string>, checks: Record<string, boolean>): EmbedField[] {
   const ouiNon = (k: string) => {
     const v = (values[k] ?? "").trim();
@@ -37,37 +35,33 @@ function buildDossierFields(values: Record<string, string>, checks: Record<strin
   };
   const v = (k: string) => (values[k] ?? "").trim();
   const raw: EmbedField[] = [
-    // Section 1 · Informations personnelles (RP)
     { name: "Nom", value: v("nom"), inline: true },
-    { name: "Prenom", value: v("prenom"), inline: true },
+    { name: "Prénom", value: v("prenom"), inline: true },
     { name: "Genre", value: v("genre"), inline: true },
-    { name: "Nationalite", value: v("nationalite"), inline: true },
+    { name: "Nationalité", value: v("nationalite"), inline: true },
     { name: "Date de naissance", value: v("dateNaissance"), inline: true },
     { name: "Lieu de naissance", value: v("lieuNaissance"), inline: true },
-    { name: "Numero bancaire", value: v("numeroBancaire"), inline: true },
-    { name: "Telephone", value: v("telephone"), inline: true },
+    { name: "Numéro bancaire", value: v("numeroBancaire"), inline: true },
+    { name: "Téléphone", value: v("telephone"), inline: true },
     { name: "Situation professionnelle", value: v("situationPro"), inline: true },
     { name: "Casier judiciaire", value: ouiNon("casierJudiciaire"), inline: true },
     { name: "Permis de conduire", value: ouiNon("permisConduire"), inline: true },
-    { name: "Categories permis", value: v("permisConduireInfo"), inline: true },
-    { name: "Formation medicale (RP)", value: v("niveauEtudes"), inline: true },
+    { name: "Catégories permis", value: v("permisConduireInfo"), inline: true },
+    { name: "Formation médicale (RP)", value: v("niveauEtudes"), inline: true },
     { name: "Adresse", value: v("adresse"), inline: false },
 
-    // Section 2 · Questions generales (RP)
-    { name: "Presentation", value: v("presentation"), inline: false },
-    { name: "Experiences professionnelles", value: v("experiencesPro"), inline: false },
+    { name: "Présentation", value: v("presentation"), inline: false },
+    { name: "Expériences professionnelles", value: v("experiencesPro"), inline: false },
     { name: "Motivations", value: v("motivations"), inline: false },
-    { name: "Disponibilites", value: v("disponibilites"), inline: true },
+    { name: "Disponibilités", value: v("disponibilites"), inline: true },
 
-    // Section 3 · Experience roleplay (HRP)
-    { name: "Experiences RP", value: v("experiencesRp"), inline: false },
+    { name: "Expériences RP", value: v("experiencesRp"), inline: false },
     { name: "Heures de jeu FiveM", value: v("heuresJeu"), inline: true },
-    { name: "Experience medical/faction", value: ouiNon("experienceMedicale"), inline: true },
+    { name: "Expérience médicale ou faction", value: ouiNon("experienceMedicale"), inline: true },
 
-    // Engagements
     {
       name: "Engagements",
-      value: `Exactitude : ${checks.truth ? "attestee" : "non"} - Reglement : ${checks.agree ? "accepte" : "non"}`,
+      value: `Exactitude : ${checks.truth ? "attestée" : "non"}. Règlement : ${checks.agree ? "accepté" : "non"}`,
       inline: false,
     },
   ];
@@ -98,13 +92,13 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ success: false, error: "Corps de requete invalide" }, { status: 400 });
+    return NextResponse.json({ success: false, error: "Corps de requête invalide" }, { status: 400 });
   }
 
   const values = body.values ?? {};
   const checks = body.checks ?? {};
 
-  // L'ID Discord vient EXCLUSIVEMENT du cookie OAuth.
+  // L'ID Discord vient uniquement du cookie OAuth.
   let userId = "";
   try {
     const authCookie = cookies().get(AUTH_COOKIE_NAME);
@@ -120,7 +114,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: "Authentification Discord requise. Connecte-toi via le bouton en haut du formulaire avant d'envoyer ta candidature.",
+        error: "Authentification Discord requise. Connectez-vous via le bouton en haut du formulaire avant d'envoyer votre candidature.",
         authRequired: true,
       },
       { status: 401 }
@@ -130,7 +124,7 @@ export async function POST(req: NextRequest) {
   const fields = buildDossierFields(values, checks);
   const reference = (body.reference ?? "").replace(/[^\w-]/g, "").slice(0, 32);
 
-  // Découpe en embeds respectant la limite Discord (25 champs, < 6000 chars/embed)
+  // Découpe en embeds (limites Discord : 25 champs, 6000 caractères)
   const candidateName = `${(values.prenom ?? "").trim()} ${(values.nom ?? "").trim()}`.trim() || "Candidat";
   const embedLen = (e: Embed) =>
     (e.title ?? "").length + (e.description ?? "").length +
@@ -142,13 +136,13 @@ export async function POST(req: NextRequest) {
   let curLen = 0;
   const pushEmbed = (fieldsPart: EmbedField[], isFirst: boolean) => {
     const base: Embed = {
-      title: isFirst ? "🩺 Nouvelle candidature — FORM LSMS-101" : "FORM LSMS-101 (suite)",
+      title: isFirst ? "Nouvelle candidature, FORM LSMS-101" : "FORM LSMS-101 (suite)",
       color: 0x2563eb,
       fields: fieldsPart,
       ...(isFirst
         ? {
             description: `Dossier de **${candidateName}** reçu via le site de recrutement.\nID Discord : \`${userId}\``,
-            footer: { text: `Réf. ${reference || "LSMS-XXX"} · Direction des ressources humaines · Central Medical, Pillbox Hill` },
+            footer: { text: `Réf. ${reference || "LSMS-XXX"} , Direction des ressources humaines, Central Medical, Pillbox Hill` },
             timestamp: new Date().toISOString(),
           }
         : {}),
@@ -171,7 +165,7 @@ export async function POST(req: NextRequest) {
     userId,
     reference,
     candidate_name: candidateName,
-    values, // passés tels quels : le plugin Modmail revalide
+    values, // le plugin Modmail revalide les valeurs
     checks,
   };
 

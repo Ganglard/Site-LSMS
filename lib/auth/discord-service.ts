@@ -71,7 +71,7 @@ export class DiscordService {
     }
 
     async addUserToGuild(userId: string, accessToken: string): Promise<void> {
-        // Si le bot token ou le guild ID ne sont pas configures, on skip
+        // Sans jeton de bot ni ID de serveur, on ne fait rien
         if (!this.botToken || !this.guildId) {
             console.warn("[discord-service] addUserToGuild skip: BOT_TOKEN ou GUILD_ID manquant");
             return;

@@ -6,7 +6,6 @@ export function getDiscordAuthUrl(returnUrl?: string) {
     const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ?? "";
     const encodedRedirectUri = encodeURIComponent(redirectUri);
 
-    // If returnUrl is provided, add it as state parameter
     const state = returnUrl ? encodeURIComponent(returnUrl) : '';
     const stateParam = state ? `&state=${state}` : '';
 

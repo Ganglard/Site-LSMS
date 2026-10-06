@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** Page d'accueil LSMS — l'intro cinematique joue en premier. */
+/** La racine redirige vers l'intro vidéo. */
 export default function Home() {
   redirect("/intro");
 }

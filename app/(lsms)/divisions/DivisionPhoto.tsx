@@ -3,10 +3,8 @@
 import { useState } from "react";
 
 /**
- * Illustration d'une division.
- * Tente jpg -> png -> webp -> svg dans `public/lsms/divisions/illustrations/`
- * (nom = slug de la division, ex. `surgery.jpg`). Tant qu'aucune image n'est
- * fournie, affiche un placeholder aux couleurs de la division.
+ * Illustration d'une division : cherche `<slug>.jpg`, `.png`, `.webp` ou `.svg`
+ * dans `public/lsms/divisions/illustrations/`, sinon affiche un emplacement vide.
  */
 const EXTENSIONS = ["jpg", "png", "webp", "svg"] as const;
 
@@ -29,10 +27,6 @@ export function DivisionPhoto({
         className="lsms-glass relative flex h-full min-h-[320px] w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[30px] px-8 py-12 text-center"
         style={{ borderStyle: "dashed", borderColor: `rgba(${accentRgb},0.45)` }}
       >
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: `radial-gradient(420px 300px at 50% 30%, rgba(${accentRgb},0.18), transparent 70%)` }}
-        />
         <svg width="46" height="46" viewBox="0 0 24 24" fill={`rgb(${accentRgb})`} aria-hidden className="relative">
           <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3z" />
         </svg>
@@ -54,10 +48,6 @@ export function DivisionPhoto({
         alt={`Illustration de la division ${name}`}
         className="absolute inset-0 h-full w-full object-cover"
         onError={() => setAttempt((n) => n + 1)}
-      />
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: `linear-gradient(180deg, transparent 45%, rgba(${accentRgb},0.22) 100%)` }}
       />
     </div>
   );

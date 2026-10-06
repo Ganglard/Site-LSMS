@@ -10,11 +10,7 @@ const NAV = [
   { href: "/accueil#faq", label: "FAQ" },
 ];
 
-/**
- * Header LSMS — pilule verre sticky.
- * Desktop : nav complete inline. Mobile (<640px) : burger -> panneau verre
- * deroulant ; embleme + Postuler restent visibles.
- */
+/** Barre de navigation fixée en haut. Menu burger sous 640 px. */
 export function LsmsHeader() {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -41,7 +37,7 @@ export function LsmsHeader() {
       <Link href="/accueil" className="flex min-w-0 items-center gap-2.5 sm:gap-3">
         <Image
           src="/lsms/emblem.png"
-          alt="Embleme LSMS"
+          alt="Emblème LSMS"
           width={36}
           height={36}
           className="h-auto w-9 flex-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]"
@@ -54,7 +50,6 @@ export function LsmsHeader() {
         </span>
       </Link>
 
-      {/* Nav desktop (>=640px) */}
       <nav className="hidden items-center gap-0.5 sm:flex" aria-label="Navigation principale">
         {NAV.map((item) => (
           <Link
@@ -73,7 +68,6 @@ export function LsmsHeader() {
         </Link>
       </nav>
 
-      {/* Mobile (<640px) : burger + Postuler compact */}
       <div className="flex items-center gap-2 sm:hidden">
         <Link
           href="/candidature"
@@ -97,7 +91,6 @@ export function LsmsHeader() {
         </button>
       </div>
 
-      {/* Panneau mobile : deroule SOUS la pilule */}
       <div
         id="lsms-mobile-nav"
         className="absolute left-0 right-0 top-[calc(100%+10px)] grid overflow-hidden rounded-[26px] sm:hidden"
@@ -143,7 +136,7 @@ export function LsmsFooter() {
           className="h-auto w-7 opacity-75"
         />
         <span className="text-[13px] text-[#7C948E]">
-          Los Santos Medical Services · Univers roleplay fictif
+          Los Santos Medical Services, univers roleplay fictif
         </span>
       </div>
       <div className="flex flex-wrap gap-[22px] text-[13px] uppercase tracking-[0.1em]">

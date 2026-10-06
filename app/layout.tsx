@@ -14,14 +14,14 @@ const saira = Saira_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "LSMS · Recrutement",
+  title: "Recrutement LSMS",
   description:
-    "Los Santos Medical Services — rejoignez une equipe medicale structuree, reactive et disponible 24/7 sur Los Santos.",
+    "Site de recrutement du Los Santos Medical Services : divisions, conditions et dépôt de candidature.",
   openGraph: {
     type: "website",
-    title: "LSMS · Recrutement",
+    title: "Recrutement LSMS",
     description:
-      "Los Santos Medical Services — rejoignez une equipe medicale structuree, reactive et disponible 24/7 sur Los Santos.",
+      "Site de recrutement du Los Santos Medical Services : divisions, conditions et dépôt de candidature.",
   },
 };
 

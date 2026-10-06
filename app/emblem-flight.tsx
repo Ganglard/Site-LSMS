@@ -3,21 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Calque persistant de l'embleme volant (logo LSMS).
+ * Calque persistant de l'emblème volant. Monté dans le layout racine, il
+ * survit à la navigation de /intro vers /accueil : le même <img> part du logo
+ * de la vidéo et se pose sur celui du hero, en ajustant l'échelle.
  *
- * Monte dans le layout RACINE : il survit a la navigation /intro -> /accueil
- * (navigation client, pas de reload), ce qui permet une transition vraiment
- * continue — le meme element <img> vole du logo affiche par la video jusqu'au
- * hero de l'accueil.
- *
- * Le vol interpole aussi l'ECHELLE (scale) pour finir exactement a la taille
- * du logo du hero : la reprise est invisible.
- *
- * API imperative (singleton) :
- *   emblemFlight.materialize({x, y, size})      — apparait (blur -> net)
- *   emblemFlight.flyTo({x, y, size, duration})  — vole vers la cible (Promise)
- *   emblemFlight.settle()                       — fondu de sortie, libere
- *   emblemFlight.isActive()
+ * API (singleton) : materialize, flyTo, settle, isActive.
  */
 
 type Point = { x: number; y: number; size?: number };

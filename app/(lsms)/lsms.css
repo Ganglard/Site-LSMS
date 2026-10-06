@@ -1,7 +1,6 @@
-/* Theme LSMS — Liquid Glass sombre medical (teal / rouge sang) */
+/* Thème LSMS : fond sombre, bleu pour les accents */
 
-/* Le body global est teinte : le theme LSMS le repeint des qu'une de ses
-   surfaces est presente (header/footer/pages). */
+/* Le body global est clair : le thème LSMS le repeint dès qu'une de ses surfaces est présente. */
 body:has(.lsms-glass),
 body:has(.lsms-root) {
   background: #050912;
@@ -14,8 +13,6 @@ body:has(.lsms-root) {
   --lsms-red-light: #DBEAFE;
   --lsms-text: #f2f7f6;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-swap: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .lsms-root {
@@ -27,7 +24,6 @@ body:has(.lsms-root) {
   position: relative;
 }
 
-/* Focus clavier visible : teal sur fond sombre */
 .lsms-root a:focus-visible,
 .lsms-root button:focus-visible,
 .lsms-root summary:focus-visible,
@@ -41,22 +37,12 @@ body:has(.lsms-root) {
   border-radius: 4px;
 }
 
-/* ---------- Verre ---------- */
 .lsms-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.04) 40%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-top-color: rgba(255, 255, 255, 0.22);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
-    0 24px 60px rgba(0, 0, 0, 0.45);
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .lsms-pill {
@@ -65,15 +51,9 @@ body:has(.lsms-root) {
   gap: 10px;
   padding: 12px 26px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
-  backdrop-filter: blur(20px) saturate(170%);
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition:
-    background 0.3s var(--ease-out),
-    border-color 0.3s var(--ease-out),
-    transform 0.3s var(--ease-out);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .lsms-cta {
@@ -85,118 +65,31 @@ body:has(.lsms-root) {
   border-radius: 999px;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(180deg, rgba(59, 110, 220, 0.95), rgba(30, 78, 175, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  --shadow-rgb: 37, 99, 235;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 14px 40px rgba(var(--shadow-rgb), 0.35);
-  transition:
-    transform 0.3s var(--ease-out),
-    box-shadow 0.3s var(--ease-out);
+  background: #2563EB;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background 0.2s ease;
 }
 
-/* Lift uniquement sur pointeur precis */
 @media (hover: hover) and (pointer: fine) {
   a.lsms-pill:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.32);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
   }
   a.lsms-cta:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      0 20px 55px rgba(var(--shadow-rgb), 0.5);
+    background: #1D4ED8;
   }
   .lsms-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 }
 
-/* Feedback d'appui universel */
-.lsms-cta:active,
-.lsms-pill:active,
-.lsms-card:active {
-  transform: scale(0.97);
-  transition: transform 160ms ease-out;
+.lsms-card {
+  transition: border-color 0.2s ease;
 }
 
-/* ---------- Reveal au scroll (GPU only) ---------- */
-.lsms-reveal {
-  opacity: 0;
-  transform: translateY(26px);
-  will-change: opacity, transform;
-  transition:
-    opacity 0.9s var(--ease-out),
-    transform 0.9s var(--ease-out);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-.lsms-reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ---------- Keyframes ---------- */
-@keyframes lsms-floatY {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-@keyframes lsms-slowSpin {
-  to { transform: rotate(360deg); }
-}
-@keyframes lsms-pulseRed {
-  0%, 49% { opacity: 0.14; }
-  50%, 100% { opacity: 0; }
-}
-@keyframes lsms-pulseTeal {
-  0%, 49% { opacity: 0; }
-  50%, 100% { opacity: 0.14; }
-}
-
-.lsms-float {
-  animation: lsms-floatY 8s ease-in-out infinite;
-}
-.lsms-spin {
-  animation: lsms-slowSpin 30s linear infinite;
-}
-.lsms-spin-slow {
-  animation: lsms-slowSpin 64s linear infinite;
-}
-
-/* Double pulsation (monitor cardiaque attenué, fond) */
-.lsms-pulse-red {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-  animation: lsms-pulseRed 2.2s linear infinite;
-  mix-blend-mode: screen;
-  background:
-    radial-gradient(700px 1000px at 8% 35%, rgba(59, 110, 220, 0.16), transparent 60%),
-    radial-gradient(550px 800px at 92% 85%, rgba(147, 197, 253, 0.08), transparent 60%);
-}
-.lsms-pulse-teal {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-  animation: lsms-pulseTeal 2.2s linear infinite;
-  mix-blend-mode: screen;
-  background:
-    radial-gradient(700px 1000px at 92% 35%, rgba(37, 99, 235, 0.14), transparent 60%),
-    radial-gradient(550px 800px at 8% 85%, rgba(147, 197, 253, 0.08), transparent 60%);
-}
-
-/* ---------- Intro cinematique : keyframes ---------- */
-@keyframes lsms-intro-haloPulse { 0%, 100% { transform: scale(1); opacity: 0.55; } 50% { transform: scale(1.09); opacity: 0.95; } }
-@keyframes lsms-intro-ringOut { 0% { transform: scale(0.82); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
+/* Animation de l'indication de l'intro vidéo */
 @keyframes lsms-intro-hintUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes lsms-intro-caretBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
-@keyframes lsms-intro-slowSpin { to { transform: rotate(360deg); } }
 
-/* ---------- Accessibilite ---------- */
 @media (prefers-reduced-motion: reduce) {
   .lsms-root *,
   .lsms-root *::before,
@@ -205,9 +98,5 @@ body:has(.lsms-root) {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  .lsms-reveal {
-    opacity: 1;
-    transform: none;
   }
 }

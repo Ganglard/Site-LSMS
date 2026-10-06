@@ -26,48 +26,47 @@ type Section = {
 
 const SECTIONS: Section[] = [
   {
-    title: "Section 1 · Informations personnelles (RP)",
+    title: "Section 1 : Informations personnelles (RP)",
     fields: [
       { key: "nom", label: "Nom", type: "text", placeholder: "ex. Smith", required: true },
-      { key: "prenom", label: "Prenom", type: "text", placeholder: "ex. John", required: true },
-      { key: "genre", label: "Genre", type: "select", options: ["Masculin", "Feminin", "Autre"], required: true },
-      { key: "nationalite", label: "Nationalite", type: "text", placeholder: "ex. Americain", required: true },
-      { key: "dateNaissance", label: "Date de naissance", type: "text", placeholder: "DD/MM/YYYY", required: true },
+      { key: "prenom", label: "Prénom", type: "text", placeholder: "ex. John", required: true },
+      { key: "genre", label: "Genre", type: "select", options: ["Masculin", "Féminin", "Autre"], required: true },
+      { key: "nationalite", label: "Nationalité", type: "text", placeholder: "ex. Américain", required: true },
+      { key: "dateNaissance", label: "Date de naissance", type: "text", placeholder: "JJ/MM/AAAA", required: true },
       { key: "lieuNaissance", label: "Lieu de naissance", type: "text", placeholder: "ex. Los Santos, San Andreas", required: true },
-      { key: "numeroBancaire", label: "Numero bancaire", type: "text", placeholder: "ex. 123456789", required: true },
+      { key: "numeroBancaire", label: "Numéro bancaire", type: "text", placeholder: "ex. 123456789", required: true },
       { key: "adresse", label: "Adresse", type: "text", placeholder: "ex. 123 Vinewood Blvd, Los Santos, SA 90001", full: true, required: true },
-      { key: "telephone", label: "Numero de telephone", type: "text", placeholder: "ex. 555-0123", required: true },
-      { key: "situationPro", label: "Situation professionnelle actuelle", type: "text", placeholder: "ex. Etudiant, Secouriste, Sans emploi", required: true },
-      { key: "casierJudiciaire", label: "Possedez-vous un casier judiciaire ?", type: "select", options: ["Non", "Oui"], required: true },
+      { key: "telephone", label: "Numéro de téléphone", type: "text", placeholder: "ex. 555-0123", required: true },
+      { key: "situationPro", label: "Situation professionnelle actuelle", type: "text", placeholder: "ex. Étudiant, Secouriste, Sans emploi", required: true },
+      { key: "casierJudiciaire", label: "Possédez-vous un casier judiciaire ?", type: "select", options: ["Non", "Oui"], required: true },
       { key: "permisConduire", label: "Avez-vous le permis de conduire ?", type: "select", options: ["Oui", "Non"], required: true },
-      { key: "permisConduireInfo", label: "Si oui, categories (moto, voiture, poids lourd...)", type: "text", placeholder: "ex. Voiture + Moto" },
-      { key: "niveauEtudes", label: "Niveau d'etudes / formation medicale (RP)", type: "select", options: ["Aucune", "Secourisme de base", "Paramedic", "Etudes medicales"], required: true },
+      { key: "permisConduireInfo", label: "Si oui, catégories (moto, voiture, poids lourd)", type: "text", placeholder: "ex. Voiture + Moto" },
+      { key: "niveauEtudes", label: "Niveau d'études et formation médicale (RP)", type: "select", options: ["Aucune", "Secourisme de base", "Paramedic", "Études médicales"], required: true },
     ],
   },
   {
-    title: "Section 2 · Questions generales (RP)",
+    title: "Section 2 : Questions générales (RP)",
     fields: [
-      { key: "presentation", label: "Presentez-vous brievement (hobbies, qualites, defauts..)", type: "textarea", rows: 3, placeholder: "Qui etes-vous ? Presentez vos centres d'interet et vos points forts.", full: true, required: true },
-      { key: "experiencesPro", label: "Quelles sont vos experiences professionnelles ?", type: "textarea", rows: 3, placeholder: "Decrivez vos anciens emplois et les competences acquises.", full: true, required: true },
+      { key: "presentation", label: "Présentez-vous brièvement (loisirs, qualités, défauts)", type: "textarea", rows: 3, placeholder: "Qui êtes-vous ? Présentez vos centres d'intérêt et vos points forts.", full: true, required: true },
+      { key: "experiencesPro", label: "Quelles sont vos expériences professionnelles ?", type: "textarea", rows: 3, placeholder: "Décrivez vos anciens emplois et les compétences acquises.", full: true, required: true },
       { key: "motivations", label: "Vos motivations ?", type: "textarea", rows: 3, placeholder: "Pourquoi souhaitez-vous rejoindre le Los Santos Medical Services ?", full: true, required: true },
-      { key: "disponibilites", label: "Vos disponibilites hebdomadaires", type: "text", placeholder: "ex. 15h/semaine, soirs et week-ends", required: true },
+      { key: "disponibilites", label: "Vos disponibilités hebdomadaires", type: "text", placeholder: "ex. 15h/semaine, soirs et week-ends", required: true },
     ],
   },
   {
-    title: "Section 3 · Experience roleplay (HRP)",
+    title: "Section 3 : Expérience roleplay (HRP)",
     fields: [
-      // L'ID Discord du candidat est recupere via OAuth (cookie d'auth)
-      // et n'est pas demande dans le formulaire. Voir /api/candidature.
-      { key: "experiencesRp", label: "Quelles sont vos experiences RP ?", type: "textarea", rows: 3, placeholder: "Serveurs RP, factions et roles precedents. Ecrivez « aucune » si vous debutez.", full: true, required: true },
+      // L'ID Discord vient de l'OAuth, pas du formulaire (voir /api/candidature).
+      { key: "experiencesRp", label: "Quelles sont vos expériences RP ?", type: "textarea", rows: 3, placeholder: "Serveurs RP, factions et rôles précédents. Écrivez « aucune » si vous débutez.", full: true, required: true },
       { key: "heuresJeu", label: "Combien d'heures de jeu FiveM avez-vous ?", type: "text", placeholder: "ex. 500 heures", required: true },
-      { key: "experienceMedicale", label: "Avez-vous deja joue dans un service medical ou une faction similaire ?", type: "select", options: ["Oui", "Non"], required: true },
+      { key: "experienceMedicale", label: "Avez-vous déjà joué dans un service médical ou une faction similaire ?", type: "select", options: ["Oui", "Non"], required: true },
     ],
   },
 ];
 
 const CHECKS = [
   { key: "truth", label: "Les informations de ce dossier sont exactes." },
-  { key: "agree", label: "J'accepte les conditions de recrutement et le reglement interieur du LSMS." },
+  { key: "agree", label: "J'accepte les conditions de recrutement et le règlement intérieur du LSMS." },
 ];
 
 function formatBirthDate(value: string) {
@@ -86,15 +85,15 @@ export default function CandidatureClient() {
   const [reference, setReference] = useState("");
   const [draftShown, setDraftShown] = useState(false);
   const [authUser, setAuthUser] = useState<{ authenticated: boolean; userId: string | null } | null>(null);
-  // Intro video : la feuille n'apparait qu'apres la cinematique, en fondu enchaine
+  // Vidéo d'intro : le formulaire n'apparaît qu'après la vidéo
   const [introDone, setIntroDone] = useState(false);
-  const [closing, setClosing] = useState(false); // fondu de sortie de l'overlay
-  const [formShown, setFormShown] = useState(false); // entree de la feuille
+  const [closing, setClosing] = useState(false); // fondu de sortie de l'intro
+  const [formShown, setFormShown] = useState(false); // affichage du formulaire
   const sheetRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const introClosedRef = useRef(false);
 
-  /** Ferme l'intro et enchaine l'entree de la feuille (transition continue). */
+  /** Ferme l'intro et affiche le formulaire. */
   const closeIntro = useCallback(() => {
     if (introClosedRef.current) return;
     introClosedRef.current = true;
@@ -103,7 +102,7 @@ export default function CandidatureClient() {
     setTimeout(() => setIntroDone(true), 800);
   }, []);
 
-  // Lecture de la video d'intro (une seule fois) + failsafe + reduced-motion
+  // Lecture de la vidéo d'intro, une seule fois par session
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const alreadyPlayed = sessionStorage.getItem(INTRO_KEY) === "1";
@@ -130,7 +129,7 @@ export default function CandidatureClient() {
     };
   }, [closeIntro]);
 
-  // Pas de scroll pendant la cinematique
+  // Pas de défilement pendant la vidéo
   useEffect(() => {
     if (introDone) return;
     document.documentElement.style.overflow = "hidden";
@@ -141,7 +140,7 @@ export default function CandidatureClient() {
     };
   }, [introDone]);
 
-  // Auth Discord au montage
+  // Vérification de la connexion Discord
   useEffect(() => {
     let active = true;
     fetch("/api/auth/me", { credentials: "same-origin" })
@@ -168,7 +167,7 @@ export default function CandidatureClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Autosave (debounce 300ms)
+  // Sauvegarde automatique du brouillon (300 ms)
   const saveTimer = useRef<ReturnType<typeof setTimeout>>();
   const persist = (v: Record<string, string>, c: Record<string, boolean>) => {
     clearTimeout(saveTimer.current);
@@ -202,7 +201,7 @@ export default function CandidatureClient() {
     const missing: string[] = [];
     for (const s of SECTIONS) for (const f of s.fields) if (f.required && !(values[f.key] || "").trim()) missing.push(f.label);
     if (values.dateNaissance && !/^\d{2}\/\d{2}\/\d{4}$/.test(values.dateNaissance)) {
-      missing.push("la date de naissance au format DD/MM/YYYY");
+      missing.push("la date de naissance au format JJ/MM/AAAA");
     }
     for (const c of CHECKS) if (!checks[c.key]) missing.push(c.label.toLowerCase());
     if (missing.length) { setError("Dossier incomplet : il manque " + missing.join(", ") + "."); return; }
@@ -239,7 +238,7 @@ export default function CandidatureClient() {
       window.scrollTo({ top: 0 });
     } catch (err) {
       setSending(false);
-      setError(`Envoi impossible pour le moment (${err instanceof Error ? err.message : "erreur reseau"}). Reessaie dans un instant.`);
+      setError(`Envoi impossible pour le moment (${err instanceof Error ? err.message : "erreur réseau"}). Réessayez dans un instant.`);
     }
   }
 
@@ -248,7 +247,6 @@ export default function CandidatureClient() {
       className="lsms-root"
       style={{ background: "radial-gradient(1200px 700px at 50% 8%, rgba(59,110,220,0.10), transparent 70%), radial-gradient(900px 900px at 85% 100%, rgba(30,58,138,0.10), transparent 65%), #060b16", backgroundAttachment: "fixed" }}
     >
-      {/* INTRO VIDEO : le bureau -> formulaire, puis fondu enchaine sur la vraie feuille */}
       {!introDone && (
         <div
           className="fixed inset-0 z-[300] flex items-center justify-center overflow-hidden bg-[#050912]"
@@ -268,7 +266,7 @@ export default function CandidatureClient() {
             className="absolute bottom-[34px] left-9 z-[5] text-[12px] uppercase tracking-[0.3em] text-white/55"
             style={{ fontFamily: "var(--font-saira), sans-serif" }}
           >
-            Direction des ressources humaines &middot; Central Medical, Pillbox Hill
+            Direction des ressources humaines, Central Medical, Pillbox Hill
           </span>
           <button
             type="button"
@@ -281,7 +279,6 @@ export default function CandidatureClient() {
         </div>
       )}
 
-      {/* Contenu : entree en douceur pendant que l'intro s'effface (fondu enchaine) */}
       <div
         className="relative z-[1] mx-auto max-w-[920px] px-[18px] pb-[90px] pt-[46px]"
         style={{
@@ -297,7 +294,7 @@ export default function CandidatureClient() {
             LOS SANTOS MEDICAL SERVICES
           </a>
           <a href="/accueil" className="text-[14px] font-semibold uppercase tracking-[0.16em] text-[#C9E0FF] hover:text-[#EAF3FF]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
-            &larr; Retour au site
+            Retour au site
           </a>
         </div>
 
@@ -305,7 +302,7 @@ export default function CandidatureClient() {
           {!sent && (
             <div className="absolute -top-4 right-[-14px] z-[3] w-[148px] bg-gradient-to-b from-[#C9DCF2] to-[#9FBedD] px-3.5 pb-[18px] pt-4 text-center shadow-[0_8px_22px_rgba(0,0,0,0.35)]" style={{ transform: "rotate(4deg)" }}>
               <div className="text-[38px] font-bold leading-none text-[#122E54]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>{pct}%</div>
-              <div className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#1E40AF]">complete</div>
+              <div className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#1E40AF]">rempli</div>
               <div className="mt-2 h-[5px] overflow-hidden rounded-full bg-[rgba(30,64,175,0.18)]">
                 <div className="h-full rounded-full bg-[#1E40AF] transition-all duration-500" style={{ width: `${pct}%` }} />
               </div>
@@ -317,7 +314,6 @@ export default function CandidatureClient() {
             className="sheet relative rounded-[3px] bg-[linear-gradient(105deg,#F4FAF8_0%,#EEF6F3_48%,#E7F1ED_100%)] px-5 pb-14 pt-10 sm:px-[72px] sm:pt-16 text-[#12211E] shadow-[0_1px_2px_rgba(0,0,0,0.5),0_12px_34px_rgba(0,0,0,0.55),0_42px_90px_rgba(0,0,0,0.5)]"
             style={{ fontFamily: "var(--font-typer), monospace" }}
           >
-            {/* Entete : croix rouge style dossier medical + tampon */}
             <div className="flex flex-wrap items-center gap-[18px] border-b-[2.5px] border-[#12211E] pb-[22px] sm:gap-[22px]">
               <div className="flex h-[84px] w-[84px] flex-none items-center justify-center rounded-md border-[3px] border-[#B02A37]">
                 <svg width="52" height="52" viewBox="0 0 24 24" fill="#B02A37" aria-hidden>
@@ -331,38 +327,37 @@ export default function CandidatureClient() {
                 <div className="mt-1.5 text-[12.5px] tracking-[0.04em] text-[#48605A]">Direction des ressources humaines, Central Medical, Pillbox Hill</div>
               </div>
               <div className="w-full text-left text-[11.5px] leading-[1.8] text-[#54706A] sm:ml-auto sm:w-auto sm:text-right">
-                FORM LSMS-101<br />SEPT. 2026 · PROMOTION 01<br />CONFIDENTIEL
+                FORM LSMS-101<br />SEPT. 2026, PROMOTION 01<br />CONFIDENTIEL
               </div>
             </div>
 
             {!sent ? (
               <form onSubmit={onSubmit} noValidate>
-                {/* Bandeau auth Discord */}
                 <div className={`mt-6 rounded-[10px] border px-5 py-4 text-[13px] leading-[1.6] ${
                   authUser?.authenticated
                     ? "border-[rgba(30,64,175,0.25)] bg-[rgba(20,120,90,0.08)] text-[#12211E]"
                     : "border-[#B02A37] bg-[rgba(176,42,55,0.08)] text-[#8E222D]"
                 }`}>
                   {authUser === null ? (
-                    <span>Verification de ta session Discord…</span>
+                    <span>Vérification de votre session Discord…</span>
                   ) : authUser.authenticated ? (
                     <span>
-                      Connecte a Discord. Ton identifiant (<code className="font-mono">{authUser.userId}</code>) sera attache au dossier.
+                      Connecté à Discord. Votre identifiant (<code className="font-mono">{authUser.userId}</code>) sera joint au dossier.
                     </span>
                   ) : (
                     <span>
-                      Tu dois te connecter avec Discord pour envoyer ta candidature.{" "}
+                      Vous devez vous connecter avec Discord pour envoyer votre candidature.{" "}
                       <a
                         href="/api/auth/discord?returnUrl=/candidature"
                         className="font-bold underline underline-offset-2 hover:opacity-80"
                       >
-                        Se connecter avec Discord &rarr;
+                        Se connecter avec Discord
                       </a>
                     </span>
                   )}
                 </div>
                 <p className="mb-3 mt-6 text-[13px] leading-[1.6] text-[#54706A]">
-                  Remplissez ce dossier lisiblement, en medecin.<br /> Les champs marques <span className="text-[#8E222D]">*</span> sont obligatoires.
+                  Remplissez ce dossier lisiblement.<br />Les champs marqués <span className="text-[#8E222D]">*</span> sont obligatoires.
                 </p>
                 {SECTIONS.map((s) => (
                   <div key={s.title} className="mt-[38px]">
@@ -391,7 +386,7 @@ export default function CandidatureClient() {
                               onChange={(e) => setField(f.key, e.target.value)}
                               className="lsms-paper-input"
                             >
-                              <option value="">Selectionner…</option>
+                              <option value="">Sélectionner…</option>
                               {f.options?.map((o) => <option key={o} value={o}>{o}</option>)}
                             </select>
                           ) : (
@@ -413,7 +408,7 @@ export default function CandidatureClient() {
 
                 <div className="mt-[38px]">
                   <div className="mb-5 flex items-center gap-3 text-[15px] font-bold uppercase tracking-[0.22em] text-[#12211E]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
-                    Section 4 · Engagement
+                    Section 4 : Engagement
                     <span className="h-px flex-1 bg-[rgba(18,33,30,0.35)]" />
                   </div>
                   {CHECKS.map((c) => (
@@ -431,7 +426,7 @@ export default function CandidatureClient() {
 
                 {draftShown && (
                   <div className="mt-6 rounded-[10px] border border-[rgba(30,64,175,0.25)] bg-[rgba(59,110,220,0.08)] px-5 py-3.5 text-[13px] text-[#1E40AF]">
-                    Un brouillon sauvegarde a ete restaure sur cet appareil.
+                    Un brouillon sauvegardé a été restauré sur cet appareil.
                   </div>
                 )}
 
@@ -461,25 +456,25 @@ export default function CandidatureClient() {
                     }}
                     className="submit-btn h-fit cursor-pointer border-none bg-[#12211E] px-10 py-[17px] text-[17px] font-bold uppercase tracking-[0.16em] text-[#EAF6F2] shadow-[0_8px_22px_rgba(0,0,0,0.35)] transition-all duration-300 hover:not-disabled:-translate-y-0.5 hover:not-disabled:bg-[#1C342F] disabled:cursor-wait disabled:opacity-55"
                   >
-                    {sending ? "Transmission…" : "Deposer le dossier"}
+                    {sending ? "Transmission…" : "Déposer le dossier"}
                   </button>
                 </div>
-                <p className="mt-3.5 text-center text-[13px] text-[#54706A]">Votre dossier sera transmis a la direction des ressources humaines du LSMS.</p>
+                <p className="mt-3.5 text-center text-[13px] text-[#54706A]">Votre dossier sera transmis à la direction des ressources humaines du LSMS.</p>
               </form>
             ) : (
               <div className="done-block py-[30px] text-center" style={{ animation: "fadeUp 0.45s var(--ease-out) both" }}>
                 <div className="mb-6 inline-block rounded-md border-[3.5px] border-double border-[#1E40AF] px-[26px] py-3.5 text-[30px] font-bold uppercase tracking-[0.24em] text-[#1E40AF]" style={{ fontFamily: "var(--font-saira), sans-serif", transform: "rotate(-7deg)" }}>
-                  Recu
+                  Reçu
                 </div>
                 <h2 className="mb-3.5 uppercase text-[#0D1B18]" style={{ fontFamily: "var(--font-saira), sans-serif", fontSize: 40, fontWeight: 700 }}>
-                  Candidature enregistree
+                  Candidature enregistrée
                 </h2>
-                <p className="mb-2 text-[15px] leading-[1.7] text-[#48605A]">Votre dossier est arrive a la direction des ressources humaines du LSMS.</p>
-                <p className="mb-2 text-[15px] leading-[1.7] text-[#48605A]">La reponse et votre convocation a l&apos;entretien vous parviendront sur Discord.</p>
-                <p className="text-[15px] text-[#48605A]">Reference du dossier : <strong className="text-[#B91C1C]">{reference}</strong> · Delai moyen 48 h</p>
+                <p className="mb-2 text-[15px] leading-[1.7] text-[#48605A]">Votre dossier est arrivé à la direction des ressources humaines du LSMS.</p>
+                <p className="mb-2 text-[15px] leading-[1.7] text-[#48605A]">La réponse et votre convocation à l&apos;entretien vous parviendront sur Discord.</p>
+                <p className="text-[15px] text-[#48605A]">Référence du dossier : <strong className="text-[#B91C1C]">{reference}</strong>. Délai moyen : 48 h</p>
                 <div className="mt-7 flex flex-wrap justify-center gap-3.5">
                   <a href="/accueil" className="border-[1.5px] border-[#12211E] bg-[#12211E] px-[30px] py-[15px] text-[15px] font-bold uppercase tracking-[0.14em] text-[#EAF6F2] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1C342F]" style={{ fontFamily: "var(--font-saira), sans-serif" }}>
-                    Retour a l&apos;accueil
+                    Retour à l&apos;accueil
                   </a>
                 </div>
               </div>
@@ -488,7 +483,7 @@ export default function CandidatureClient() {
         </div>
       </div>
 
-      {/* Styles papier : GLOBAL (pas de styled-jsx : :checked + data-URI casse) */}
+      {/* Styles globaux : le styled-jsx limité au composant casse :checked avec le data-URI */}
       <style jsx global>{`
         @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
         .lsms-paper-input {

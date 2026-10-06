@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** GET /api/auth/me — état de connexion Discord pour le formulaire. */
+/** GET /api/auth/me : état de connexion Discord pour le formulaire. */
 export async function GET() {
   const cookieStore = cookies();
   const authCookie = cookieStore.get(AUTH_COOKIE_NAME);

@@ -1,45 +1,44 @@
-# Site LSMS — Recrutement
+# Site LSMS : recrutement
 
-Portage du site LSPD vers le **Los Santos Medical Services** (meme processus,
-theme medical teal/rouge). Next.js 14 App Router + Tailwind.
+Site de recrutement du Los Santos Medical Services (faction RP FiveM).
+Next.js 14 (App Router) et Tailwind, déployé sur Vercel.
 
 ## Pages
 
-- `/` -> redirige vers `/intro` (intro cinematique, clic sur l'embleme)
-- `/accueil` — hero Liquid Glass, unites, avantages, FAQ
-- `/candidature` — dossier FORM LSMS-101, OAuth Discord OBLIGATOIRE
+- `/` redirige vers `/intro` (vidéo d'intro, clic sur l'emblème)
+- `/accueil` : présentation, divisions, avantages, FAQ
+- `/divisions/[slug]` : missions et profil recherché de chaque division
+- `/candidature` : dossier FORM LSMS-101, connexion Discord obligatoire
 
-## Ou vont les candidatures ?
+## Candidatures
 
-Pas encore de bot : `/api/candidature` ecrit un JSON horodate dans
-`candidatures/` (local / serveur). Pour brancher un bot ModMail plus tard,
-remplacer le bloc "STOCKAGE LOCAL" de `app/api/candidature/route.ts` par le
-POST `X-Relay-Key` (pattern identique au site LSPD).
+`/api/candidature` envoie le dossier au bot Modmail LSMS
+(`MODMAIL_API_THREAD_URL`) avec l'en-tête `X-Relay-Key`. L'ID Discord du
+candidat est lu dans le cookie `discord_user_id` posé par le callback OAuth,
+jamais dans le formulaire.
 
-## Dev
+## Développement
 
 ```bash
 npm install
 npm run build
-npm start        # ou npx next start -p 3000 -H 0.0.0.0 pour test LAN
+npm start
 ```
 
-Avant `next start`, tuer tout process sur :3000 (un `next dev` oublie sert
-l'ancien build).
+Avant `next start`, arrêter tout process sur le port 3000 (un `next dev` oublié
+sert l'ancien build).
 
 ## Variables d'environnement
 
-Voir `.env.example`. Sur Vercel : Settings -> Environment Variables
-(les `.env*` du depot sont ignores), puis Redeploy.
+Voir `.env.example`. Sur Vercel : Settings, Environment Variables (les fichiers
+`.env*` du dépôt sont ignorés), puis redéployer.
 
-- OAuth Discord : creer une application dediee LSMS sur le Developer Portal,
-  redirect URI exacte = `https://<domaine>/api/auth/discord/callback` (sans
-  slash final). Scopes : `identify guilds.join`.
-- L'ID Discord du candidat est lu depuis le cookie `discord_user_id` pose par
-  le callback — jamais depuis le formulaire.
+OAuth Discord : l'URI de redirection doit être exactement
+`https://<domaine>/api/auth/discord/callback`, sans slash final. Scopes :
+`identify guilds.join`.
 
-## Assets manquants (a fournis par toi)
+## Images
 
-- `public/lsms/emblem.png` (petit, header/footer) et `public/lsms/emblem-hd.png`
-  (hero + intro) : etoile de vie LSMS. En attendant, des placeholder SVG sont
-  generes automatiquement.
+Les emblèmes, logos de divisions et vidéos d'intro sont dans `public/lsms/`.
+Les illustrations de division sont facultatives : `public/lsms/divisions/illustrations/<slug>.jpg`
+(ou `.png`, `.webp`, `.svg`).

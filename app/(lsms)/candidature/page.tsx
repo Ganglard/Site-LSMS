@@ -3,7 +3,7 @@ import CandidatureClient from "./CandidatureClient";
 import "../lsms.css";
 
 export const metadata = {
-  title: "LSMS · Dossier de candidature",
+  title: "Dossier de candidature LSMS",
 };
 
 export default function CandidaturePage() {

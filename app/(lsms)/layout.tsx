@@ -24,15 +24,12 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "LSMS · Recrutement",
+  title: "Recrutement LSMS",
   description:
-    "Los Santos Medical Services — rejoignez une equipe medicale structuree, reactive et disponible 24/7 sur Los Santos.",
+    "Site de recrutement du Los Santos Medical Services : divisions, conditions et dépôt de candidature.",
 };
 
-/**
- * Groupe de routes LSMS : isole le site du theme global et fournit les polices
- * du theme LSMS. Chaque page embarque son propre header Liquid Glass.
- */
+/** Groupe de routes LSMS : polices et fond propres au site, isolés du thème global. */
 export default function LsmsLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
