@@ -24,9 +24,9 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "Recrutement LSMS",
+  title: "LSMS · Recrutement",
   description:
-    "Site de recrutement du Los Santos Medical Services : divisions, conditions et dépôt de candidature.",
+    "Los Santos Medical Services — rejoignez une équipe médicale structurée, réactive et disponible 24/7 sur Los Santos.",
 };
 
 /** Groupe de routes LSMS : polices et fond propres au site, isolés du thème global. */
