@@ -18,7 +18,7 @@ const VIDEO_H = 720;
 // elle a été calculée par recalage d'image et inclut la légère perspective.
 const EMBLEM_W = 653;
 const EMBLEM_H = 656;
-const EMBLEM_MATRIX = [0.4947, -0.00576, 0.00877, 0.46522, 474.29037, 139.19158];
+const EMBLEM_MATRIX = [0.49466, -0.00578, 0.00864, 0.46523, 474.36921, 139.21779];
 const RING_DIA = 0.27; // diamètre de l'anneau cliquable, part de la largeur de la vidéo
 
 /** Place l'emblème, l'anneau et le point de départ de l'envol dans la fenêtre (object-fit: cover). */
