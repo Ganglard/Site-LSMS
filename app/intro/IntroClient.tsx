@@ -9,16 +9,19 @@ import { emblemFlight } from "../emblem-flight";
  * placé sur le logo lance l'emblème volant (emblem-flight) vers /accueil.
  */
 
-// Position du logo dans la dernière image de la vidéo (mesurée). L'anneau
-// cliquable est plus large que le logo pour absorber l'imprécision.
 const VIDEO_W = 1280;
 const VIDEO_H = 720;
-const BADGE_CX = 0.501; // centre du logo, part de la largeur
-const BADGE_CY = 0.41; // centre du logo, part de la hauteur
-const BADGE_DIA = 0.223; // diamètre du logo, part de la largeur
-const RING_DIA = 0.27; // diamètre de l'anneau cliquable
 
-/** Position et tailles du logo de la vidéo dans la fenêtre (object-fit: cover). */
+// L'emblème net (emblem-hd.png) est superposé au logo flou de la vidéo une fois
+// celle-ci arrêtée. EMBLEM_MATRIX est la transformation (matrice CSS a, b, c, d,
+// e, f, en pixels de la vidéo) qui l'amène sur le logo de la dernière image :
+// elle a été calculée par recalage d'image et inclut la légère perspective.
+const EMBLEM_W = 653;
+const EMBLEM_H = 656;
+const EMBLEM_MATRIX = [0.4947, -0.00576, 0.00877, 0.46522, 474.29037, 139.19158];
+const RING_DIA = 0.27; // diamètre de l'anneau cliquable, part de la largeur de la vidéo
+
+/** Place l'emblème, l'anneau et le point de départ de l'envol dans la fenêtre (object-fit: cover). */
 function badgeInViewport() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -27,13 +30,17 @@ function badgeInViewport() {
   const dh = VIDEO_H * scale;
   const ox = (vw - dw) / 2;
   const oy = (vh - dh) / 2;
-  const x = ox + BADGE_CX * dw;
-  const y = oy + BADGE_CY * dh;
+  const [a, b, c, d, e, f] = EMBLEM_MATRIX;
+  // Centre de l'image de l'emblème, dans la vidéo puis dans la fenêtre
+  const fx = a * (EMBLEM_W / 2) + c * (EMBLEM_H / 2) + e;
+  const fy = b * (EMBLEM_W / 2) + d * (EMBLEM_H / 2) + f;
+  const meanScale = (Math.hypot(a, b) + Math.hypot(c, d)) / 2;
   return {
-    x,
-    y,
-    size: BADGE_DIA * dw, // logo seul
-    ring: RING_DIA * dw, // anneau cliquable (plus large)
+    x: ox + fx * scale,
+    y: oy + fy * scale,
+    size: meanScale * EMBLEM_W * scale, // largeur de l'image de l'emblème
+    ring: RING_DIA * dw,
+    matrix: `matrix(${a * scale}, ${b * scale}, ${c * scale}, ${d * scale}, ${ox + e * scale}, ${oy + f * scale})`,
   };
 }
 
@@ -43,6 +50,7 @@ export default function IntroClient() {
   const gateRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hotspotRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLImageElement>(null);
   const navigatingRef = useRef(false);
   const router = useRouter();
 
@@ -66,12 +74,13 @@ export default function IntroClient() {
     };
   }, []);
 
-  // L'anneau suit le logo de la vidéo au redimensionnement
+  // L'anneau et l'emblème net suivent le logo de la vidéo au redimensionnement
   useEffect(() => {
     const place = () => {
+      const { x, y, ring, matrix } = badgeInViewport();
+      if (overlayRef.current) overlayRef.current.style.transform = matrix;
       const el = hotspotRef.current;
       if (!el) return;
-      const { x, y, ring } = badgeInViewport();
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
       el.style.width = `${ring}px`;
@@ -130,7 +139,7 @@ export default function IntroClient() {
     const v = videoRef.current;
     const zoomTarget = "transform 0.75s cubic-bezier(0.5, 0, 0.75, 0.4), opacity 0.6s ease";
     if (v) {
-      v.style.transformOrigin = `${BADGE_CX * 100}% ${BADGE_CY * 100}%`;
+      v.style.transformOrigin = `${x}px ${y}px`;
       v.style.transition = zoomTarget;
       v.style.transform = "scale(1.5)";
       v.style.opacity = "0";
@@ -168,6 +177,31 @@ export default function IntroClient() {
       />
 
       <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 50%, transparent 32%, rgba(5,9,18,0.35) 80%)", pointerEvents: "none" }} />
+
+      {/* Emblème net par-dessus le logo flou de la vidéo, en fondu une fois la vidéo arrêtée */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={overlayRef}
+        src="/lsms/emblem-hd.png"
+        alt=""
+        aria-hidden
+        width={EMBLEM_W}
+        height={EMBLEM_H}
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          width: EMBLEM_W,
+          height: EMBLEM_H,
+          maxWidth: "none",
+          transformOrigin: "0 0",
+          pointerEvents: "none",
+          zIndex: 4,
+          opacity: ready ? 1 : 0,
+          transition: phase === "flying" ? "opacity 0.3s ease" : "opacity 1.1s ease",
+          filter: "brightness(0.94)",
+        }}
+      />
 
       <button
         ref={hotspotRef}
