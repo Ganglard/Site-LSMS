@@ -11,12 +11,12 @@ import { emblemFlight } from "../emblem-flight";
 
 // Position du logo dans la dernière image de la vidéo (mesurée). L'anneau
 // cliquable est plus large que le logo pour absorber l'imprécision.
-const VIDEO_W = 1920;
-const VIDEO_H = 1040;
-const BADGE_CX = 0.505; // centre du logo, part de la largeur
-const BADGE_CY = 0.5; // centre du logo, part de la hauteur
-const BADGE_DIA = 0.285; // diamètre du logo, part de la largeur
-const RING_DIA = 0.34; // diamètre de l'anneau cliquable
+const VIDEO_W = 1280;
+const VIDEO_H = 720;
+const BADGE_CX = 0.501; // centre du logo, part de la largeur
+const BADGE_CY = 0.41; // centre du logo, part de la hauteur
+const BADGE_DIA = 0.223; // diamètre du logo, part de la largeur
+const RING_DIA = 0.27; // diamètre de l'anneau cliquable
 
 /** Position et tailles du logo de la vidéo dans la fenêtre (object-fit: cover). */
 function badgeInViewport() {
@@ -59,7 +59,7 @@ export default function IntroClient() {
       setPhase("ready");
     };
     v.addEventListener("ended", finish);
-    const failsafe = setTimeout(finish, 12000);
+    const failsafe = setTimeout(finish, 15000);
     return () => {
       v.removeEventListener("ended", finish);
       clearTimeout(failsafe);
