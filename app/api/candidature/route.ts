@@ -19,7 +19,16 @@ const FIELD_VALUE_CHUNK = 1000;
 
 type EmbedField = { name: string; value: string; inline?: boolean };
 type Embed = { title?: string; description?: string; color?: number; fields?: EmbedField[]; footer?: { text?: string }; timestamp?: string };
-type Payload = { reference?: string; values?: Record<string, string>; checks?: Record<string, boolean> };
+type Payload = { reference?: string; values?: Record<string, string>; checks?: Record<string, boolean>; preview?: string | null };
+
+/** Aperçu JPEG de la feuille (data URL) : accepté seulement s'il est bien un JPEG raisonnable. */
+const PREVIEW_MAX_CHARS = 4_000_000;
+function cleanPreview(p: unknown): string | null {
+  if (typeof p !== "string" || p.length > PREVIEW_MAX_CHARS) return null;
+  const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(p);
+  if (!m) return null;
+  return m[1].startsWith("/9j/") ? m[1] : null; // signature JPEG (FF D8 FF)
+}
 
 function chunkText(s: string): string[] {
   const parts: string[] = [];
@@ -167,6 +176,7 @@ export async function POST(req: NextRequest) {
     candidate_name: candidateName,
     values, // le plugin Modmail revalide les valeurs
     checks,
+    preview: cleanPreview(body.preview), // base64 JPEG, attaché à l\'embed par le bot
   };
 
   try {

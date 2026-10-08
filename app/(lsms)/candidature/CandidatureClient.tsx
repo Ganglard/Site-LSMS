@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { captureSheetJpeg, loadHtml2Canvas } from "@/lib/form-preview";
 import "../lsms.css";
 
 const REF_PREFIX = "LSMS-";
@@ -101,6 +102,9 @@ export default function CandidatureClient() {
     setFormShown(true);
     setTimeout(() => setIntroDone(true), 800);
   }, []);
+
+  // Moteur de capture pour l'aperçu JPEG joint au ticket Discord
+  useEffect(() => { loadHtml2Canvas("/lsms/html2canvas.min.js"); }, []);
 
   // Lecture de la vidéo d'intro, une seule fois par session
   useEffect(() => {
@@ -210,6 +214,11 @@ export default function CandidatureClient() {
     setSending(true);
     setError("");
 
+    // Aperçu JPEG de la feuille remplie (joint à l'embed Discord, optionnel)
+    const preview = sheetRef.current
+      ? await captureSheetJpeg(sheetRef.current, { backgroundColor: "#EEF6F3", accent: "#1E40AF", hide: ["[data-nocapture]"] })
+      : null;
+
     const payload = {
       reference: ref,
       values: Object.fromEntries(
@@ -219,6 +228,7 @@ export default function CandidatureClient() {
         truth: !!checks.truth,
         agree: !!checks.agree,
       },
+      preview,
     };
 
     try {
@@ -333,7 +343,7 @@ export default function CandidatureClient() {
 
             {!sent ? (
               <form onSubmit={onSubmit} noValidate>
-                <div className={`mt-6 rounded-[10px] border px-5 py-4 text-[13px] leading-[1.6] ${
+                <div data-nocapture className={`mt-6 rounded-[10px] border px-5 py-4 text-[13px] leading-[1.6] ${
                   authUser?.authenticated
                     ? "border-[rgba(30,64,175,0.25)] bg-[rgba(20,120,90,0.08)] text-[#12211E]"
                     : "border-[#B02A37] bg-[rgba(176,42,55,0.08)] text-[#8E222D]"
@@ -356,7 +366,7 @@ export default function CandidatureClient() {
                     </span>
                   )}
                 </div>
-                <p className="mb-3 mt-6 text-[13px] leading-[1.6] text-[#54706A]">
+                <p data-nocapture className="mb-3 mt-6 text-[13px] leading-[1.6] text-[#54706A]">
                   Remplissez ce dossier lisiblement.<br />Les champs marqués <span className="text-[#8E222D]">*</span> sont obligatoires.
                 </p>
                 {SECTIONS.map((s) => (
@@ -425,13 +435,13 @@ export default function CandidatureClient() {
                 </div>
 
                 {draftShown && (
-                  <div className="mt-6 rounded-[10px] border border-[rgba(30,64,175,0.25)] bg-[rgba(59,110,220,0.08)] px-5 py-3.5 text-[13px] text-[#1E40AF]">
+                  <div data-nocapture className="mt-6 rounded-[10px] border border-[rgba(30,64,175,0.25)] bg-[rgba(59,110,220,0.08)] px-5 py-3.5 text-[13px] text-[#1E40AF]">
                     Un brouillon sauvegardé a été restauré sur cet appareil.
                   </div>
                 )}
 
                 {error && (
-                  <div className="mt-6 border-[1.5px] border-[#B02A37] bg-[rgba(176,42,55,0.07)] px-[18px] py-3.5 text-[14px] text-[#8E222D]">{error}</div>
+                  <div data-nocapture className="mt-6 border-[1.5px] border-[#B02A37] bg-[rgba(176,42,55,0.07)] px-[18px] py-3.5 text-[14px] text-[#8E222D]">{error}</div>
                 )}
 
                 <div className="mt-11 flex flex-col items-stretch gap-8 sm:flex-row sm:items-end sm:gap-10">
@@ -448,6 +458,7 @@ export default function CandidatureClient() {
                     </div>
                   </div>
                   <button
+                    data-nocapture
                     type="submit"
                     disabled={sending}
                     style={{
@@ -459,7 +470,7 @@ export default function CandidatureClient() {
                     {sending ? "Transmission…" : "Déposer le dossier"}
                   </button>
                 </div>
-                <p className="mt-3.5 text-center text-[13px] text-[#54706A]">Votre dossier sera transmis à la direction des ressources humaines du LSMS.</p>
+                <p data-nocapture className="mt-3.5 text-center text-[13px] text-[#54706A]">Votre dossier sera transmis à la direction des ressources humaines du LSMS.</p>
               </form>
             ) : (
               <div className="done-block py-[30px] text-center" style={{ animation: "fadeUp 0.45s var(--ease-out) both" }}>
