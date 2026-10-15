@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
  * Démarre le flow OAuth Discord (identify + guilds.join) et revient sur returnUrl.
  */
 export async function GET(req: NextRequest) {
-  const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? process.env.DISCORD_CLIENT_ID ?? "";
-  const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ?? process.env.DISCORD_REDIRECT_URI ?? "";
+  const clientId = process.env.DISCORD_CLIENT_ID || process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "";
+  const redirectUri = process.env.DISCORD_REDIRECT_URI || process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI || "";
   if (!clientId || !redirectUri) {
     return NextResponse.json(
       { success: false, error: "OAuth Discord non configuré (NEXT_PUBLIC_DISCORD_CLIENT_ID / NEXT_PUBLIC_DISCORD_REDIRECT_URI)" },

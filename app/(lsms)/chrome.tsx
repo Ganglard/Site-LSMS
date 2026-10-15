@@ -8,6 +8,7 @@ const NAV = [
   { href: "/accueil", label: "Accueil" },
   { href: "/accueil#divisions", label: "Divisions" },
   { href: "/accueil#faq", label: "FAQ" },
+  { href: "/rendez-vous", label: "Rendez-vous" },
 ];
 
 /** Barre de navigation fixée en haut. Menu burger sous 640 px. */
@@ -142,6 +143,9 @@ export function LsmsFooter() {
       <div className="flex flex-wrap gap-[22px] text-[13px] uppercase tracking-[0.1em]">
         <Link href="/accueil" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
           Accueil
+        </Link>
+        <Link href="/rendez-vous" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
+          Rendez-vous
         </Link>
         <Link href="/candidature" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
           Candidature

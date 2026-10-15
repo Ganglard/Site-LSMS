@@ -88,7 +88,10 @@ export default function AccueilClient() {
             Les candidatures se déposent en ligne. La réponse est envoyée sur Discord sous 48 h.
           </p>
           <div className="mb-[60px] flex flex-wrap justify-center gap-4">
-            <Link href="/candidature" className="lsms-cta">
+            <Link href="/rendez-vous" className="lsms-cta">
+              Prendre rendez-vous
+            </Link>
+            <Link href="/candidature" className="lsms-pill !px-[36px] !py-[17px] !text-[15px] font-medium">
               Déposer ma candidature
             </Link>
             <a href="#faq" className="lsms-pill !px-[36px] !py-[17px] !text-[15px] font-medium">
