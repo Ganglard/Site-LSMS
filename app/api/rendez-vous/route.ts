@@ -14,7 +14,9 @@ export const runtime = "nodejs";
 
 const THREAD_URL = process.env.MODMAIL_API_THREAD_URL ?? "http://127.0.0.1:8788/api/thread";
 const APPOINTMENT_URL = process.env.MODMAIL_APPOINTMENT_URL ?? THREAD_URL.replace(/\/api\/thread$/, "/api/appointment");
-const RELAY_KEY = process.env.RELAY_KEY ?? "";
+// Le bot rendez-vous est une instance dédiée : il peut avoir sa propre clé de relais.
+// À défaut, la clé du bot candidatures (RELAY_KEY) est utilisée.
+const RELAY_KEY = process.env.MODMAIL_APPOINTMENT_RELAY_KEY || process.env.RELAY_KEY || "";
 
 const FIELD_NAME_MAX = 256;
 const FIELD_VALUE_CHUNK = 1000;
