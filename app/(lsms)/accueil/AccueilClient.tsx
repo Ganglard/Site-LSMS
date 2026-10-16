@@ -5,6 +5,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { emblemFlight } from "../../emblem-flight";
 
+/**
+ * Prise de rendez-vous : exclusivement dans Discord (bot LSMS).
+ * Le bouton n'apparaît que si l'invitation est renseignée dans
+ * NEXT_PUBLIC_LSMS_RDV_DISCORD (sinon on ne montre pas de lien mort).
+ */
+const RDV_DISCORD = process.env.NEXT_PUBLIC_LSMS_RDV_DISCORD ?? "";
+
 const DIVISIONS = [
   { slug: "medical-academy", name: "Medical Academy", logo: "/lsms/divisions/medical-academy.png" },
   { slug: "surgery", name: "Surgery Service", logo: "/lsms/divisions/surgery.png" },
@@ -88,9 +95,11 @@ export default function AccueilClient() {
             Les candidatures se déposent en ligne. La réponse est envoyée sur Discord sous 48 h.
           </p>
           <div className="mb-[60px] flex flex-wrap justify-center gap-4">
-            <Link href="/rendez-vous" className="lsms-cta">
-              Prendre rendez-vous
-            </Link>
+            {RDV_DISCORD ? (
+              <a href={RDV_DISCORD} target="_blank" rel="noreferrer" className="lsms-cta">
+                Prendre rendez-vous
+              </a>
+            ) : null}
             <Link href="/candidature" className="lsms-pill !px-[36px] !py-[17px] !text-[15px] font-medium">
               Déposer ma candidature
             </Link>

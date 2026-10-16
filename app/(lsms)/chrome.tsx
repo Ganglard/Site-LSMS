@@ -4,11 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const NAV = [
+/**
+ * Prise de rendez-vous : elle se fait exclusivement dans Discord (bot LSMS).
+ * Le lien n'apparaît que si l'invitation Discord est renseignée
+ * (NEXT_PUBLIC_LSMS_RDV_DISCORD), afin de ne jamais pointer vers une page vide.
+ */
+const RDV_DISCORD = process.env.NEXT_PUBLIC_LSMS_RDV_DISCORD ?? "";
+
+const NAV: { href: string; label: string; external?: boolean }[] = [
   { href: "/accueil", label: "Accueil" },
   { href: "/accueil#divisions", label: "Divisions" },
   { href: "/accueil#faq", label: "FAQ" },
-  { href: "/rendez-vous", label: "Rendez-vous" },
+  ...(RDV_DISCORD ? [{ href: RDV_DISCORD, label: "Rendez-vous", external: true }] : []),
 ];
 
 /** Barre de navigation fixée en haut. Menu burger sous 640 px. */
@@ -52,15 +59,27 @@ export function LsmsHeader() {
       </Link>
 
       <nav className="hidden items-center gap-0.5 sm:flex" aria-label="Navigation principale">
-        {NAV.map((item) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            className="rounded-full px-[18px] py-[10px] text-[13.5px] text-[rgba(235,245,242,0.75)] transition-colors duration-300 hover:bg-white/10 hover:text-white max-sm:flex max-sm:min-h-[44px] max-sm:items-center"
-          >
-            {item.label}
-          </Link>
-        ))}
+        {NAV.map((item) =>
+          item.external ? (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full px-[18px] py-[10px] text-[13.5px] text-[rgba(235,245,242,0.75)] transition-colors duration-300 hover:bg-white/10 hover:text-white max-sm:flex max-sm:min-h-[44px] max-sm:items-center"
+            >
+              {item.label}
+            </a>
+          ) : (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="rounded-full px-[18px] py-[10px] text-[13.5px] text-[rgba(235,245,242,0.75)] transition-colors duration-300 hover:bg-white/10 hover:text-white max-sm:flex max-sm:min-h-[44px] max-sm:items-center"
+            >
+              {item.label}
+            </Link>
+          )
+        )}
         <Link
           href="/candidature"
           className="lsms-cta ml-2 !px-[26px] !py-[12px] !text-[13.5px]"
@@ -107,17 +126,31 @@ export function LsmsHeader() {
             className="lsms-glass flex flex-col gap-1 rounded-[26px] p-3"
             aria-label="Navigation mobile"
           >
-            {NAV.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                tabIndex={open ? 0 : -1}
-                className="rounded-2xl px-5 py-3.5 text-[15px] text-[rgba(235,245,242,0.85)] transition-colors duration-200 hover:bg-white/10 hover:text-white"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {NAV.map((item) =>
+              item.external ? (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setOpen(false)}
+                  tabIndex={open ? 0 : -1}
+                  className="rounded-2xl px-5 py-3.5 text-[15px] text-[rgba(235,245,242,0.85)] transition-colors duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  tabIndex={open ? 0 : -1}
+                  className="rounded-2xl px-5 py-3.5 text-[15px] text-[rgba(235,245,242,0.85)] transition-colors duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </nav>
         </div>
       </div>
@@ -144,9 +177,11 @@ export function LsmsFooter() {
         <Link href="/accueil" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
           Accueil
         </Link>
-        <Link href="/rendez-vous" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
-          Rendez-vous
-        </Link>
+        {RDV_DISCORD ? (
+          <a href={RDV_DISCORD} target="_blank" rel="noreferrer" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
+            Rendez-vous
+          </a>
+        ) : null}
         <Link href="/candidature" className="text-[#8AA39C] hover:text-[var(--lsms-teal-light)]">
           Candidature
         </Link>
